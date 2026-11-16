@@ -259,12 +259,39 @@ body::before {
   }
 }
 
+
+/* Brasão principal do Campeonato Precon */
+header{min-height:112px;height:112px;align-items:center}
+.brand{
+  flex:0 0 370px;min-width:370px;height:112px;padding:0 10px;
+  display:flex;align-items:center;justify-content:center;
+  border-right:1px solid rgba(230,190,125,.28);
+  background:linear-gradient(90deg,rgba(4,9,16,.95),rgba(4,9,16,.45));
+  overflow:hidden;
+}
+.brand-emblem{
+  display:block;width:100%;height:108px;object-fit:contain;
+  filter:drop-shadow(0 3px 12px rgba(0,0,0,.55));
+}
+nav{align-self:stretch}
+@media(max-width:900px){
+  header{height:auto;min-height:0;display:block}
+  .brand{width:100%;height:104px;min-width:0;flex:none;padding:2px 12px;border-right:0;border-bottom:1px solid rgba(230,190,125,.25)}
+  .brand-emblem{width:min(100%,390px);height:100px}
+  nav{height:62px;width:100%;overflow-x:auto;overflow-y:hidden}
+}
+@media(max-width:600px){
+  .brand{height:88px;padding:0 8px}
+  .brand-emblem{height:86px;width:min(100%,330px)}
+  nav{height:58px}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <header>
- <div class="brand"><div class="brand-mark">♛</div><div><strong>CAMPEONATO<br>PRECON</strong><small>MAGIC: THE GATHERING</small></div></div>
+ <div class="brand"><img class="brand-emblem" src="assets/header-brasao.webp" alt="Campeonato Precon — Magic: The Gathering"></div>
  <nav id="nav">
   <button class="active" data-page="home"><span>⌂</span>Visão Geral</button>
   <button data-page="players"><span>♟</span>Participantes</button>
