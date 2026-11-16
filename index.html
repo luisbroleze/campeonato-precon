@@ -507,6 +507,18 @@ nav button.active{
 @media(max-width:800px){.duo-score-row{grid-template-columns:1fr}.duo-result{grid-template-columns:repeat(3,1fr) auto}}
 @media(max-width:520px){.duo-members{grid-template-columns:1fr}.duo-result{grid-template-columns:repeat(2,1fr)}}
 
+
+.catalog-picker{margin:0 0 18px;padding:14px;border:1px solid rgba(218,169,99,.3);border-radius:12px;background:rgba(3,8,15,.55)}
+.catalog-heading{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+.precon-results{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:10px;max-height:340px;overflow:auto}
+.precon-option{display:grid;grid-template-columns:58px 1fr;gap:10px;align-items:center;text-align:left;border:1px solid rgba(218,169,99,.22);border-radius:9px;padding:8px;background:rgba(13,22,34,.86);color:inherit;cursor:pointer}
+.precon-option:hover{border-color:#d79b51;background:rgba(35,42,52,.95)}
+.precon-option img{width:58px;height:78px;object-fit:cover;border-radius:5px;background:#101722}
+.precon-option strong{display:block;font-size:13px}
+.precon-option small{display:block;color:#c2c6ce;font-size:11px;margin-top:4px}
+.catalog-note{font-size:11px;margin:10px 0 0}
+@media(max-width:600px){.catalog-heading{align-items:flex-start;flex-direction:column}.precon-results{grid-template-columns:1fr;max-height:300px}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -563,6 +575,13 @@ nav button.active{
   <div class="page-head"><h1>Decks Precon</h1><p>Cadastre decks, combinações de cores e acompanhe frequência de uso.</p></div>
   <div class="panel"><div class="panel-title">Adicionar deck</div><div class="panel-body">
    <form id="deckForm">
+    <div class="catalog-picker">
+      <div class="catalog-heading"><strong>Catálogo de precons</strong><span class="muted">Selecione para preencher o cadastro</span></div>
+      <input id="preconSearch" type="search" placeholder="Buscar por deck, coleção ou comandante...">
+      <div id="preconResults" class="precon-results"></div>
+      <p class="muted catalog-note">O catálogo é uma base inicial de decks identificados no EDHcheck. Você também pode cadastrar decks manualmente.</p>
+    </div>
+
     <div class="form-grid"><input id="deckName" placeholder="Nome do deck precon" required><input id="deckCommander" placeholder="Comandante (opcional)"><input id="deckPhoto" type="file" accept="image/*"></div>
     <div class="field"><label>Combinação de cores</label><div class="form-grid" id="deckColors">
      <label><input type="checkbox" value="W"> Branco</label><label><input type="checkbox" value="U"> Azul</label><label><input type="checkbox" value="B"> Preto</label><label><input type="checkbox" value="R"> Vermelho</label><label><input type="checkbox" value="G"> Verde</label>
@@ -698,6 +717,29 @@ document.getElementById('playerForm').onsubmit=async e=>{e.preventDefault();try{
 function editPlayer(id){const p=db.players.find(x=>x.id===id);openModal('Editar participante',`<div class="field"><label>Nome</label><input id="editName" value="${esc(p.name)}"></div><div class="field"><label>Apelido</label><input id="editNick" value="${esc(p.nick)}"></div><div class="field"><label>Nova foto (opcional)</label><input id="editPlayerPhoto" type="file" accept="image/*"></div><div class="modal-actions"><button class="btn" onclick="savePlayer('${id}')">Salvar</button></div>`)}
 async function savePlayer(id){const p=db.players.find(x=>x.id===id);p.name=document.getElementById('editName').value.trim();p.nick=document.getElementById('editNick').value.trim();const f=document.getElementById('editPlayerPhoto').files[0];if(f)p.photo=await imageToSquare(f);closeModal();save()}
 function deletePlayer(id){if(confirm('Excluir participante? Os lançamentos históricos serão mantidos, mas deixarão de compor o ranking.')){db.players=db.players.filter(p=>p.id!==id);save()}}
+
+const PRECON_CATALOG=[{"set": "Star Trek", "name": "We Are the Borg", "commander": "The Borg Queen", "colors": ["U", "B"], "year": 2026}, {"set": "Star Trek", "name": "Federation Fleet", "commander": "Jean-Luc Picard, Luminary", "colors": ["W", "U", "R"], "year": 2026}, {"set": "Star Trek", "name": "Klingon Fury", "commander": "Worf, Defiant Commander", "colors": ["W", "B", "R"], "year": 2026}, {"set": "Star Trek", "name": "Landing Party", "commander": "Commander Spock", "colors": ["W", "U", "G"], "year": 2026}, {"set": "Edge of Eternities", "name": "Counter Intelligence", "commander": "Inspirit, Flagship Vessel", "colors": ["W", "U", "R"], "year": 2025}, {"set": "Edge of Eternities", "name": "World Shaper", "commander": "Hearthhull, the Worldseed", "colors": ["B", "R", "G"], "year": 2025}, {"set": "Final Fantasy", "name": "Limit Break", "commander": "Cloud, Ex-SOLDIER", "colors": ["W", "U", "B", "R", "G"], "year": 2025}, {"set": "Final Fantasy", "name": "Revival Trance", "commander": "Terra, Herald of Hope", "colors": ["W", "B", "G"], "year": 2025}, {"set": "Final Fantasy", "name": "Counter Blitz", "commander": "Tidus, Yuna's Guardian", "colors": ["W", "U", "R"], "year": 2025}, {"set": "Final Fantasy", "name": "Scions & Spellcraft", "commander": "Y'shtola, Night's Blessed", "colors": ["U", "B", "G"], "year": 2025}, {"set": "Tarkir: Dragonstorm", "name": "Jeskai Striker", "commander": "Shiko and Narset, Unified", "colors": ["W", "U", "R"], "year": 2025}, {"set": "Tarkir: Dragonstorm", "name": "Temur Roar", "commander": "Ureni of the Unwritten", "colors": ["U", "R", "G"], "year": 2025}, {"set": "Tarkir: Dragonstorm", "name": "Mardu Surge", "commander": "Zurgo Stormrender", "colors": ["W", "B", "R"], "year": 2025}, {"set": "Tarkir: Dragonstorm", "name": "Abzan Armor", "commander": "Felothar the Steadfast", "colors": ["W", "B", "G"], "year": 2025}, {"set": "Tarkir: Dragonstorm", "name": "Sultai Arisen", "commander": "Teval, the Balanced Scale", "colors": ["U", "B", "G"], "year": 2025}];
+function renderPreconCatalog(query=''){
+ const host=document.getElementById('preconResults');if(!host)return;
+ const q=query.trim().toLocaleLowerCase();
+ const rows=PRECON_CATALOG.filter(x=>[x.name,x.set,x.commander,String(x.year)].join(' ').toLocaleLowerCase().includes(q));
+ host.innerHTML=rows.length?rows.map((x,i)=>`<button type="button" class="precon-option" data-precon-index="${PRECON_CATALOG.indexOf(x)}"><img loading="lazy" src="https://api.scryfall.com/cards/named?exact=${encodeURIComponent(x.commander)}&format=image&version=small" alt=""><span><strong>${esc(x.name)}</strong><small>${esc(x.set)} · ${x.year}</small><small>${esc(x.commander)}</small></span></button>`).join(''):'<div class="muted">Nenhum precon encontrado nesta base.</div>';
+ host.querySelectorAll('[data-precon-index]').forEach(btn=>btn.onclick=()=>selectPrecon(Number(btn.dataset.preconIndex)));
+}
+async function selectPrecon(index){
+ const x=PRECON_CATALOG[index];if(!x)return;
+ document.getElementById('deckName').value=x.name;
+ document.getElementById('deckCommander').value=x.commander;
+ document.querySelectorAll('#deckColors input').forEach(c=>c.checked=x.colors.includes(c.value));
+ const fileInput=document.getElementById('deckPhoto');
+ try{
+  const response=await fetch(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(x.commander)}`);
+  if(response.ok){const card=await response.json();const image=card.image_uris?.art_crop||card.image_uris?.normal||card.card_faces?.[0]?.image_uris?.art_crop;if(image){const blob=await (await fetch(image)).blob();const file=new File([blob],`$ {x.name}.jpg`.replace('$ ',''),{type:blob.type||'image/jpeg'});const transfer=new DataTransfer();transfer.items.add(file);fileInput.files=transfer.files;}}
+ }catch(err){console.warn('Imagem do comandante não carregada; o cadastro manual continua disponível.',err)}
+ document.getElementById('deckName').scrollIntoView({behavior:'smooth',block:'center'});
+}
+document.getElementById('preconSearch').addEventListener('input',e=>renderPreconCatalog(e.target.value));
+renderPreconCatalog();
 document.getElementById('deckForm').onsubmit=async e=>{e.preventDefault();try{const colors=[...document.querySelectorAll('#deckColors input:checked')].map(x=>x.value);const photo=await imageToSquare(document.getElementById('deckPhoto').files[0]);db.decks.push({id:uid(),name:deckName.value.trim(),colors,commander:deckCommander.value.trim(),photo});e.target.reset();save()}catch(err){alert('Não foi possível processar a imagem.')}};
 function editDeck(id){const d=db.decks.find(x=>x.id===id);openModal('Editar deck',`<div class="field"><label>Nome</label><input id="editDeckName" value="${esc(d.name)}"></div><div class="field"><label>Comandante</label><input id="editCommander" value="${esc(d.commander)}"></div><div class="field"><label>Nova imagem (opcional)</label><input id="editDeckPhoto" type="file" accept="image/*"></div><div class="field"><label>Cores (W/U/B/R/G)</label><input id="editColors" value="${(d.colors||[]).join(',')}" placeholder="Ex.: R,G"></div><div class="modal-actions"><button class="btn" onclick="saveDeck('${id}')">Salvar</button></div>`)}
 async function saveDeck(id){const d=db.decks.find(x=>x.id===id);d.name=document.getElementById('editDeckName').value.trim();d.commander=document.getElementById('editCommander').value.trim();d.colors=document.getElementById('editColors').value.toUpperCase().split(/[,\s/]+/).filter(x=>colorNames[x]);const f=document.getElementById('editDeckPhoto').files[0];if(f)d.photo=await imageToSquare(f);closeModal();save()}
