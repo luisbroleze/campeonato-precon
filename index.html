@@ -401,51 +401,79 @@ img{max-width:100%}
 }
 
 
-
-/* Ajuste exclusivo do brasão/título do cabeçalho */
-header .brand{
-  height:auto;
-  min-height:0;
-  align-self:stretch;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
+/* Ajuste de preenchimento integral das imagens em todos os tamanhos */
+body::before{
+  background-size:cover !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
 }
-header .brand-emblem{
-  display:block;
-  width:100%;
-  height:auto;
-  aspect-ratio:3 / 1;
-  max-height:none;
-  object-fit:cover;
-  object-position:center;
+.shortcut:nth-child(1),
+.shortcut:nth-child(2),
+.shortcut:nth-child(3){
+  background-size:cover !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
+  min-width:0;
+  min-height:clamp(112px,14vw,160px);
 }
-@media(max-width:1100px){
-  header .brand{
-    height:auto;
-    min-height:0;
-    padding:0;
-  }
-  header .brand-emblem{
-    width:min(100%,390px);
-    height:auto;
-    aspect-ratio:3 / 1;
-    object-fit:cover;
+.prize{
+  background-size:cover !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
+  min-width:0;
+  min-height:100%;
+}
+@media(max-width:820px){
+  .prize{
+    min-height:340px;
+    background-position:center 54% !important;
   }
 }
 @media(max-width:600px){
-  header .brand{
-    height:auto;
-    min-height:0;
-    padding:0 8px;
+  .shortcut:nth-child(1),
+  .shortcut:nth-child(2),
+  .shortcut:nth-child(3){
+    min-height:128px;
+    background-size:cover !important;
+    background-position:center center !important;
   }
-  header .brand-emblem{
-    width:min(100%,330px);
-    height:auto;
-    aspect-ratio:3 / 1;
-    object-fit:cover;
+  .prize{
+    min-height:320px;
+    background-size:cover !important;
+    background-position:center 56% !important;
   }
+}
+@media(max-width:380px){
+  .prize{min-height:300px}
+}
+
+
+/* Cabeçalho em camadas independentes: cenário de batalha + brasão transparente */
+header{
+  position:sticky;
+  isolation:isolate;
+  background:
+    linear-gradient(90deg,rgba(5,8,14,.48),rgba(5,8,14,.12) 48%,rgba(5,8,14,.48)),
+    url("assets/header-batalha-planeswalkers.webp") center 43% / cover no-repeat;
+  border-bottom:1px solid rgba(230,190,125,.35);
+}
+.brand{
+  position:relative;
+  z-index:1;
+  background:linear-gradient(90deg,rgba(5,8,14,.40),rgba(5,8,14,.08));
+}
+.brand-emblem{
+  object-fit:contain;
+  filter:drop-shadow(0 3px 10px rgba(0,0,0,.72));
+}
+nav{position:relative;z-index:1}
+@media(max-width:1100px){
+  header{background-position:center 43%}
+  .brand{background:linear-gradient(180deg,rgba(5,8,14,.20),rgba(5,8,14,.42))}
+}
+@media(max-width:600px){
+  header{background-position:center 42%}
+  .brand-emblem{max-height:72px}
 }
 
 </style>
@@ -453,7 +481,7 @@ header .brand-emblem{
 </head>
 <body>
 <header>
- <div class="brand"><img class="brand-emblem" src="assets/header-brasao.webp" alt="Campeonato Precon — Magic: The Gathering"></div>
+ <div class="brand"><img class="brand-emblem" src="assets/brasao-campeonato-precon.png" alt="Campeonato Precon — Magic: The Gathering"></div>
  <nav id="nav">
   <button class="active" data-page="home"><span>⌂</span>Visão Geral</button>
   <button data-page="players"><span>♟</span>Participantes</button>
