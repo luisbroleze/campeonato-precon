@@ -570,6 +570,56 @@ nav button.active{
 .profile-favorite .favorite-stats{font-size:12px;color:#c4ccd5;line-height:1.8}
 .profile-no-data{font-size:12px;color:#aeb8c5;padding:8px 0}
 @media(max-width:760px){.profile-heading{align-items:stretch;flex-direction:column}.profile-controls{min-width:0;grid-template-columns:90px minmax(0,1fr)}.profile-hero{grid-template-columns:1fr}.profile-person{min-height:240px}.profile-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-lower{grid-template-columns:1fr}.profile-outcomes{grid-template-columns:100px 1fr}.profile-donut{width:96px;height:96px}}
+
+/* Refinamento visual do arquivo de planeswalker */
+.profile-heading{position:relative;isolation:isolate;min-height:132px;padding:24px 28px;background:url("assets/header-batalha-planeswalkers.webp") center 43%/cover no-repeat;border-bottom:1px solid rgba(244,179,75,.35)}
+.profile-heading:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(4,8,15,.94) 0%,rgba(5,10,18,.88) 48%,rgba(5,9,17,.84) 100%),linear-gradient(0deg,rgba(3,7,13,.62),rgba(3,7,13,.55));backdrop-filter:brightness(.48)}
+.profile-heading h2,.profile-heading p,.profile-kicker,.profile-controls{position:relative;text-shadow:0 2px 5px #000}
+.profile-heading p{color:#f0e8da}
+.profile-hero{grid-template-columns:minmax(250px,.68fr) minmax(0,2fr);gap:18px;padding:20px 20px 18px}
+.profile-person{min-height:300px;box-shadow:inset 0 -90px 75px rgba(0,0,0,.75),0 12px 28px rgba(0,0,0,.25)}
+.profile-person img{mask-image:linear-gradient(#000 72%,rgba(0,0,0,.88) 100%);object-position:center 22%}
+.profile-person-info{padding:20px;background:linear-gradient(0deg,rgba(3,6,12,.98),rgba(3,6,12,.02))}
+.profile-ribbon,.duo-kicker{font-size:9px;letter-spacing:1.7px;color:#e7b96e;font-weight:800;margin-bottom:7px}
+.profile-metrics{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.profile-metric{display:flex;align-items:center;gap:11px;min-height:105px;padding:13px 12px;background:linear-gradient(145deg,rgba(30,43,59,.92),rgba(10,17,28,.88));border:1px solid rgba(194,207,223,.16);box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.metric-icon{flex:0 0 38px;width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:linear-gradient(145deg,rgba(244,179,75,.22),rgba(244,179,75,.06));border:1px solid rgba(244,179,75,.32);color:#f4bd62;font:700 20px Cinzel;text-shadow:0 0 12px rgba(244,179,75,.35)}
+.profile-metric small{font-size:9px;letter-spacing:1px;color:#c2ccda}
+.profile-metric strong{font-size:clamp(22px,2.2vw,29px);margin:3px 0}
+.profile-metric em{font-size:9px;color:#aeb9c8}
+.metric-highlight{border-color:rgba(244,179,75,.5);background:linear-gradient(145deg,rgba(107,65,26,.4),rgba(10,17,28,.92))}
+.profile-lower{grid-template-columns:1fr 1fr;gap:14px;padding:0 20px 20px}
+.profile-card{background:linear-gradient(145deg,rgba(9,16,27,.94),rgba(13,22,35,.88));border-color:rgba(197,211,228,.14);box-shadow:0 10px 25px rgba(0,0,0,.13);padding:18px}
+.profile-card h3{display:flex;align-items:center;gap:9px;font-size:15px;letter-spacing:.2px}
+.profile-card h3 span{color:#f4b34b;font-size:18px}
+.profile-favorite{background:linear-gradient(125deg,rgba(83,53,25,.58),rgba(8,15,25,.96) 68%);border-color:rgba(244,179,75,.48)}
+.duo-feature{display:flex;align-items:center;gap:20px;min-height:118px}
+.duo-portraits{position:relative;display:flex;align-items:center;padding:4px 12px 4px 2px}
+.duo-portrait{width:86px;height:104px;overflow:hidden;border-radius:10px;border:2px solid #d49a4e;background:linear-gradient(145deg,#29394d,#101722);box-shadow:0 7px 18px #0008}
+.duo-portrait+.duo-portrait{margin-left:-18px;transform:translateY(7px);border-color:#e8c27e}
+.duo-portrait img{width:100%;height:100%;object-fit:cover;display:block}
+.duo-initial{height:100%;display:grid;place-items:center;color:#f4bd62;font:700 34px Cinzel}
+.duo-cross{position:absolute;left:76px;top:39px;color:#ffe1a1;text-shadow:0 2px 8px #000;font-size:18px}
+.duo-info{min-width:0}
+.profile-favorite .favorite-name{font-size:21px;margin:0 0 8px}
+.favorite-stats{line-height:1.8}
+.favorite-stats b{color:#ffd17f}
+.deck-art-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.deck-art-card{min-width:0}
+.deck-art-image{height:150px;position:relative;overflow:hidden;border-radius:9px;border:1px solid rgba(244,179,75,.28);background:linear-gradient(145deg,#29394d,#0d1521);box-shadow:0 8px 18px #0005}
+.deck-art-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s}
+.deck-art-card:hover .deck-art-image img{transform:scale(1.05)}
+.deck-art-image:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.5))}
+.deck-rank,.deck-use{position:absolute;z-index:1;top:8px;padding:4px 7px;border-radius:5px;background:rgba(5,9,15,.78);color:#f6d18e;font-size:10px;font-weight:800}
+.deck-rank{left:8px}.deck-use{right:8px}
+.deck-art-fallback{height:100%;display:grid;place-items:center;color:#e6b25e;font-size:42px}
+.deck-art-name{font-size:11px;font-weight:700;color:#f0e6d6;line-height:1.35;margin:8px 0 7px;min-height:30px}
+.deck-art-bar{height:4px;background:rgba(255,255,255,.12);border-radius:4px;overflow:hidden}
+.deck-art-bar i{display:block;height:100%;background:linear-gradient(90deg,#a45c24,#ffd17a);border-radius:4px}
+.profile-trend{height:120px}
+@media(max-width:900px){.profile-hero{grid-template-columns:1fr}.profile-person{min-height:260px}.profile-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.profile-heading{padding:18px;align-items:stretch;flex-direction:column}.profile-controls{min-width:0;grid-template-columns:1fr 1fr}.profile-controls label{font-size:9px}.profile-lower{grid-template-columns:1fr;padding:0 12px 14px}.profile-hero{padding:12px}.profile-metrics{gap:7px}.profile-metric{min-height:88px;padding:9px 7px;gap:7px}.metric-icon{width:30px;height:30px;flex-basis:30px;font-size:16px}.profile-metric em{font-size:8px}.deck-art-image{height:120px}.duo-feature{gap:12px}.duo-portrait{width:68px;height:86px}.duo-cross{left:60px;top:34px}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -782,21 +832,23 @@ function renderParticipantProfile(){
  const winPct=played?wins/played*100:0,drawPct=played?draws/played*100:0;
  const photo=p.photo?`<img src="${p.photo}" alt="Foto de ${esc(p.name)}">`:`<div class="profile-initial">${esc((p.nick||p.name||'?').trim().charAt(0).toUpperCase())}</div>`;
  const fmt=n=>Number(n).toLocaleString('pt-BR',{maximumFractionDigits:1});
- content.innerHTML=`<div class="profile-hero"><div class="profile-person">${photo}<div class="profile-person-info"><h3>${esc(p.nick||p.name)}</h3><span>${esc(p.nick&&p.nick!==p.name?p.name:'CAMPEONATO PRECON')}</span></div></div><div class="profile-metrics">
- <div class="profile-metric"><small>Aproveitamento</small><strong>${fmt(rate)}%</strong><em>vitórias + metade dos empates</em></div>
- <div class="profile-metric"><small>Partidas</small><strong>${played}</strong><em>${presences} presenças registradas</em></div>
- <div class="profile-metric"><small>Vitórias</small><strong>${wins}</strong><em>resultados positivos</em></div>
- <div class="profile-metric"><small>Empates</small><strong>${draws}</strong><em>partidas empatadas</em></div>
- <div class="profile-metric"><small>Derrotas</small><strong>${losses}</strong><em>partidas perdidas</em></div>
- <div class="profile-metric"><small>Pontos</small><strong>${rows.reduce((n,m)=>n+Number(m.wins||0)*2+Number(m.draws||0)+(m.present?1:0)+Number(m.legacyAdjustment||0),0)}</strong><em>pontuação acumulada</em></div>
- <div class="profile-metric"><small>Decks utilizados</small><strong>${decks.length}</strong><em>deck(s) diferente(s)</em></div>
- <div class="profile-metric"><small>Duplas</small><strong>${rows.filter(m=>m.groupId).length}</strong><em>registros em partidas de dupla</em></div>
+ const metric=(ico,label,value,sub,cls='')=>`<div class="profile-metric ${cls}"><span class="metric-icon">${ico}</span><div><small>${label}</small><strong>${value}</strong><em>${sub}</em></div></div>`;
+ const partnerPhoto=person=>person.photo?`<img src="${person.photo}" alt="Foto de ${esc(person.name)}">`:`<span class="duo-initial">${esc((person.nick||person.name||'?').trim().charAt(0).toUpperCase())}</span>`;
+ content.innerHTML=`<div class="profile-hero"><div class="profile-person">${photo}<div class="profile-person-info"><div class="profile-ribbon">PLANESWALKER · PERFIL DE JOGADOR</div><h3>${esc(p.nick||p.name)}</h3><span>${esc(p.nick&&p.nick!==p.name?p.name:'CAMPEONATO PRECON')}</span></div></div><div class="profile-metrics">
+ ${metric('◈','Aproveitamento',fmt(rate)+'%','vitórias + metade dos empates','metric-highlight')}
+ ${metric('⚔','Partidas',played,presences+' presenças registradas')}
+ ${metric('✦','Vitórias',wins,'resultados positivos')}
+ ${metric('≋','Empates',draws,'partidas empatadas')}
+ ${metric('☠','Derrotas',losses,'partidas perdidas')}
+ ${metric('◆','Pontos',rows.reduce((n,m)=>n+Number(m.wins||0)*2+Number(m.draws||0)+(m.present?1:0)+Number(m.legacyAdjustment||0),0),'pontuação acumulada')}
+ ${metric('▣','Decks',decks.length,'deck(s) diferente(s)')}
+ ${metric('♟','Duplas',rows.filter(m=>m.groupId).length,'registros em partidas de dupla')}
  </div></div>
  <div class="profile-lower">
- <div class="profile-card"><h3>Distribuição de resultados</h3><div class="profile-outcomes"><div class="profile-donut" style="--win:${winPct}%;--draw:${winPct+drawPct}%"><b>${fmt(rate)}%</b></div><div class="profile-legend"><div><span style="--dot:#e8a847">Vitórias</span><b>${wins}</b></div><div><span style="--dot:#75a9cf">Empates</span><b>${draws}</b></div><div><span style="--dot:#bd6671">Derrotas</span><b>${losses}</b></div></div></div></div>
- <div class="profile-card"><h3>Forma recente · últimos ${recent.length} registros</h3>${trend.length?`<div class="profile-trend">${trend.map((v,i)=>`<span style="height:${Math.max(4,v)}%" title="${fmt(v)}%"><i>${i+1}</i></span>`).join('')}</div>`:'<div class="profile-no-data">Ainda não há resultados neste período.</div>'}</div>
- <div class="profile-card profile-favorite"><h3>Dupla mais frequente</h3>${favorite?`<div class="favorite-name">♛ ${esc(favorite.player.nick||favorite.player.name)}</div><div class="favorite-stats">${favorite.games} partidas juntos · ${favorite.wins} vitórias · ${favorite.draws} empates · ${favorite.losses} derrotas<br>Aproveitamento da dupla: ${fmt((favorite.wins+favorite.draws*.5)/(favorite.wins+favorite.draws+favorite.losses||1)*100)}%</div>`:'<div class="profile-no-data">Nenhuma partida em dupla registrada neste período.</div>'}</div>
- <div class="profile-card"><h3>Decks utilizados</h3>${decks.length?`<div class="profile-list">${decks.map(x=>`<div><div class="profile-list-row"><span>${esc(x.deck.name)}<small>${x.uses} utilização(ões)</small></span><b>${Math.round(x.uses/maxDeck*100)}%</b></div><div class="profile-bar"><i style="width:${x.uses/maxDeck*100}%"></i></div></div>`).join('')}</div>`:'<div class="profile-no-data">Nenhum deck registrado neste período.</div>'}</div>
+ <div class="profile-card outcomes-card"><h3><span>◉</span> Distribuição de resultados</h3><div class="profile-outcomes"><div class="profile-donut" style="--win:${winPct}%;--draw:${winPct+drawPct}%"><b>${fmt(rate)}%</b></div><div class="profile-legend"><div><span style="--dot:#e8a847">Vitórias</span><b>${wins}</b></div><div><span style="--dot:#75a9cf">Empates</span><b>${draws}</b></div><div><span style="--dot:#bd6671">Derrotas</span><b>${losses}</b></div></div></div></div>
+ <div class="profile-card trend-card"><h3><span>⌁</span> Forma recente · últimos ${recent.length} registros</h3>${trend.length?`<div class="profile-trend">${trend.map((v,i)=>`<span style="height:${Math.max(4,v)}%" title="${fmt(v)}%"><i>${i+1}</i></span>`).join('')}</div>`:'<div class="profile-no-data">Ainda não há resultados neste período.</div>'}</div>
+ <div class="profile-card profile-favorite"><h3><span>♛</span> Dupla mais frequente</h3>${favorite?`<div class="duo-feature"><div class="duo-portraits"><div class="duo-portrait main-portrait">${partnerPhoto(p)}</div><div class="duo-portrait">${partnerPhoto(favorite.player)}</div><span class="duo-cross">✦</span></div><div class="duo-info"><div class="duo-kicker">PARCERIA EM DESTAQUE</div><div class="favorite-name">${esc(favorite.player.nick||favorite.player.name)}</div><div class="favorite-stats">${favorite.games} partidas juntos · ${favorite.wins} vitórias · ${favorite.draws} empates · ${favorite.losses} derrotas<br>Aproveitamento da dupla: <b>${fmt((favorite.wins+favorite.draws*.5)/(favorite.wins+favorite.draws+favorite.losses||1)*100)}%</b></div></div></div>`:'<div class="profile-no-data">Nenhuma partida em dupla registrada neste período.</div>'}</div>
+ <div class="profile-card decks-feature"><h3><span>▤</span> Os 3 decks mais utilizados</h3>${decks.length?`<div class="deck-art-grid">${decks.slice(0,3).map((x,i)=>`<div class="deck-art-card"><div class="deck-art-image">${x.deck.photo?`<img src="${x.deck.photo}" alt="${esc(x.deck.name)}">`:'<div class="deck-art-fallback">✧</div>'}<span class="deck-rank">0${i+1}</span><span class="deck-use">${x.uses} ${x.uses===1?'uso':'usos'}</span></div><div class="deck-art-name">${esc(x.deck.name)}</div><div class="deck-art-bar"><i style="width:${x.uses/maxDeck*100}%"></i></div></div>`).join('')}</div>`:'<div class="profile-no-data">Nenhum deck registrado neste período.</div>'}</div>
  </div>`;
 }
 document.getElementById('profilePlayer').addEventListener('change',e=>{selectedProfilePlayer=e.target.value;renderParticipantProfile()});
