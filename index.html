@@ -665,6 +665,35 @@ nav button.active{
 .history-date-caption{padding:0 16px 12px;color:#aeb9c8;font-size:10px}
 @media(max-width:600px){.history-title{align-items:flex-start;flex-direction:column}.history-title label{width:100%;justify-content:space-between}.history-title input{min-width:0;flex:1}.outcomes-summary{gap:12px}.result-bar-row{grid-template-columns:60px minmax(40px,1fr) 22px;gap:7px}}
 
+
+/* Arquivo de estatisticas dos decks */
+.deck-profile{margin-bottom:18px;overflow:hidden;border:1px solid rgba(244,179,75,.28);border-radius:14px;background:rgba(8,14,23,.72);box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.deck-profile-heading{position:relative;isolation:isolate;min-height:132px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:22px;background:url("assets/banner-decks.webp") center 48%/cover no-repeat;border-bottom:1px solid rgba(244,179,75,.35)}
+.deck-profile-heading:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(4,8,15,.78),rgba(5,10,18,.58) 55%,rgba(5,9,17,.72));backdrop-filter:brightness(.78)}
+.deck-profile-heading h2,.deck-profile-heading p,.deck-profile-heading .profile-kicker,.deck-profile-controls{position:relative;text-shadow:0 2px 5px #000}
+.deck-profile-heading h2{font:700 24px Cinzel;color:#fff0d4;margin:5px 0}
+.deck-profile-heading p{color:#f0e8da;font-size:12px;margin:0}
+.deck-profile-controls{display:grid;grid-template-columns:1fr;gap:5px;min-width:min(290px,38%)}
+.deck-profile-controls label{font-size:10px;color:#f0d7ac;letter-spacing:.7px}
+.deck-profile-controls select{width:100%;min-width:0;padding:10px;border:1px solid rgba(244,179,75,.42);border-radius:7px;background:#111c2b;color:#fff}
+.deck-profile-hero{display:grid;grid-template-columns:minmax(190px,.55fr) minmax(0,2fr);gap:18px;padding:20px}
+.deck-profile-art{min-height:245px;position:relative;overflow:hidden;border:1px solid rgba(244,179,75,.35);border-radius:10px;background:linear-gradient(145deg,#29394d,#101722);box-shadow:inset 0 -80px 60px #0009}
+.deck-profile-art img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover}
+.deck-profile-art:after{content:"";position:absolute;inset:40% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.9))}
+.deck-profile-art-info{position:absolute;z-index:1;left:15px;right:15px;bottom:14px}
+.deck-profile-art-info small{font-size:9px;letter-spacing:1.5px;color:#e7b96e;font-weight:800}
+.deck-profile-art-info h3{font:700 17px Cinzel;color:#ffe0a4;margin:5px 0}
+.deck-profile-art-info span{font-size:11px;color:#e0e5ec}
+.deck-profile-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.deck-profile-lower{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 20px 20px}
+.deck-profile-link{display:inline-flex;align-items:center;gap:7px;margin-top:10px;padding:8px 11px;border:1px solid rgba(244,179,75,.45);border-radius:7px;color:#ffd17f;text-decoration:none;font-size:11px;font-weight:700;background:rgba(5,10,18,.65)}
+.deck-profile-link:hover{background:rgba(116,69,26,.35)}
+.deck-profile-players{display:grid;gap:10px}
+.deck-profile-player{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;color:#e1e4e9}
+.deck-profile-player b{color:#ffd17f}
+@media(max-width:760px){.deck-profile-heading{align-items:stretch;flex-direction:column}.deck-profile-controls{min-width:0;grid-template-columns:1fr 1fr}.deck-profile-hero{grid-template-columns:1fr}.deck-profile-art{min-height:220px}.deck-profile-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.deck-profile-lower{grid-template-columns:1fr}}
+@media(max-width:600px){.deck-profile-heading{padding:18px}.deck-profile-hero{padding:12px}.deck-profile-lower{padding:0 12px 14px}.deck-profile-metrics{gap:7px}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -723,6 +752,10 @@ nav button.active{
  </section>
  <section id="decks" class="section">
   <div class="page-head"><h1>Decks Precon</h1><p>Cadastre decks, combinações de cores e acompanhe frequência de uso.</p></div>
+  <div class="deck-profile" id="deckProfile">
+   <div class="deck-profile-heading"><div><div class="profile-kicker">ARQUIVO DO DECK</div><h2>Estatísticas dos decks</h2><p>Selecione um deck para consultar seu desempenho no campeonato.</p></div><div class="deck-profile-controls"><label for="profileDeck">Deck</label><select id="profileDeck"><option value="">Selecione um deck</option></select><label for="profileDeckSeason">Período</label><select id="profileDeckSeason"><option value="all">Histórico completo</option></select></div></div>
+   <div id="deckProfileContent"><div class="profile-empty">Cadastre ou selecione um deck para revelar suas estatísticas.</div></div>
+  </div>
   <div class="panel"><div class="panel-title">Adicionar deck</div><div class="panel-body">
    <form id="deckForm">
     <div class="catalog-picker">
@@ -732,7 +765,7 @@ nav button.active{
       <p class="muted catalog-note">O catálogo é uma base inicial de decks identificados no EDHcheck. Você também pode cadastrar decks manualmente.</p>
     </div>
 
-    <div class="form-grid"><input id="deckName" placeholder="Nome do deck precon" required><input id="deckCommander" placeholder="Comandante (opcional)"><input id="deckPhoto" type="file" accept="image/*"><div id="preconImagePreview" class="precon-image-preview" style="display:none;grid-column:1/-1"><img id="preconPreviewImg" alt="Prévia do comandante"><span id="preconLoadStatus">Carregando dados do comandante…</span></div></div>
+    <div class="form-grid"><input id="deckName" placeholder="Nome do deck precon" required><input id="deckCommander" placeholder="Comandante (opcional)"><input id="deckListUrl" type="url" placeholder="Link da decklist completa (opcional)"><input id="deckPhoto" type="file" accept="image/*"><div id="preconImagePreview" class="precon-image-preview" style="display:none;grid-column:1/-1"><img id="preconPreviewImg" alt="Prévia do comandante"><span id="preconLoadStatus">Carregando dados do comandante…</span></div></div>
     <div class="field"><label>Combinação de cores</label><div class="form-grid" id="deckColors">
      <label><input type="checkbox" value="W"> Branco</label><label><input type="checkbox" value="U"> Azul</label><label><input type="checkbox" value="B"> Preto</label><label><input type="checkbox" value="R"> Vermelho</label><label><input type="checkbox" value="G"> Verde</label>
     </div></div>
@@ -909,16 +942,58 @@ function renderParticipantProfile(){
  <div class="profile-card decks-feature"><h3><span>▤</span> Os 3 decks mais utilizados</h3>${decks.length?`<div class="deck-art-grid">${decks.slice(0,3).map((x,i)=>`<div class="deck-art-card"><div class="deck-art-image">${x.deck.photo?`<img src="${x.deck.photo}" alt="${esc(x.deck.name)}">`:'<div class="deck-art-fallback">✧</div>'}<span class="deck-rank">0${i+1}</span></div><div class="deck-art-name">${esc(x.deck.name)}</div><div class="deck-art-meta">${x.uses} ${x.uses===1?'utilização':'utilizações'} <b>${Math.round(x.uses/maxDeck*100)}%</b></div><div class="deck-art-bar"><i style="width:${x.uses/maxDeck*100}%"></i></div></div>`).join('')}</div>`:'<div class="profile-no-data">Nenhum deck registrado neste período.</div>'}</div>
  </div>`;
 }
+let selectedProfileDeck='';
+let selectedProfileDeckSeason='all';
+function safeExternalUrl(value){try{const u=new URL(String(value||''));return ['http:','https:'].includes(u.protocol)?u.href:''}catch{return ''}}
+function renderDeckProfile(){
+ const deckSelect=document.getElementById('profileDeck'),seasonSelect=document.getElementById('profileDeckSeason'),content=document.getElementById('deckProfileContent');
+ if(!deckSelect||!seasonSelect||!content)return;
+ const decks=[...db.decks].sort((a,b)=>(a.name||'').localeCompare(b.name||'','pt-BR',{sensitivity:'base'}));
+ if(!selectedProfileDeck||!decks.some(d=>d.id===selectedProfileDeck))selectedProfileDeck=decks[0]?.id||'';
+ deckSelect.innerHTML='<option value="">Selecione um deck</option>'+decks.map(d=>`<option value="${d.id}" ${d.id===selectedProfileDeck?'selected':''}>${esc(d.name)}</option>`).join('');
+ const seasons=[...db.seasons].sort((a,b)=>b.start.localeCompare(a.start));
+ if(selectedProfileDeckSeason!=='all'&&!seasons.some(x=>x.id===selectedProfileDeckSeason))selectedProfileDeckSeason='all';
+ seasonSelect.innerHTML='<option value="all">Histórico completo</option>'+seasons.map(x=>`<option value="${x.id}" ${x.id===selectedProfileDeckSeason?'selected':''}>${esc(x.name)}</option>`).join('');
+ if(!decks.length){content.innerHTML='<div class="profile-empty">Cadastre decks para visualizar as estatísticas.</div>';return}
+ const d=decks.find(x=>x.id===selectedProfileDeck);if(!d){content.innerHTML='<div class="profile-empty">Selecione um deck.</div>';return}
+ const season=seasons.find(x=>x.id===selectedProfileDeckSeason);
+ let rows=db.matches.filter(m=>m.deckId===d.id);if(season)rows=rows.filter(m=>m.date>=season.start&&m.date<=season.end);rows.sort((a,b)=>a.date.localeCompare(b.date));
+ const sum=k=>rows.reduce((n,m)=>n+Number(m[k]||0),0),wins=sum('wins'),draws=sum('draws'),losses=sum('losses'),played=wins+draws+losses,uses=rows.length,rate=played?(wins+draws*.5)/played*100:0;
+ const fmt=n=>Number(n).toLocaleString('pt-BR',{maximumFractionDigits:1});
+ const metric=(ico,label,value,sub,cls='')=>`<div class="profile-metric ${cls}"><span class="metric-icon">${ico}</span><div><small>${label}</small><strong>${value}</strong><em>${sub}</em></div></div>`;
+ const playerCounts={};rows.forEach(m=>{const p=db.players.find(x=>x.id===m.playerId);if(!p)return;const item=playerCounts[p.id]||(playerCounts[p.id]={player:p,uses:0,wins:0,draws:0,losses:0});item.uses++;item.wins+=Number(m.wins||0);item.draws+=Number(m.draws||0);item.losses+=Number(m.losses||0)});
+ const players=Object.values(playerCounts).sort((a,b)=>b.uses-a.uses||b.wins-a.wins),recent=rows.slice(-10),trend=recent.map(m=>{const n=Number(m.wins||0)+Number(m.draws||0)+Number(m.losses||0);return n?(Number(m.wins||0)+Number(m.draws||0)*.5)/n*100:0});
+ const colors=(d.colors||[]).map(c=>`${colorSymbols[c]||''} ${colorNames[c]||c}`).join(' · ')||'Cores não definidas';
+ const image=d.photo?`<img src="${d.photo}" alt="${esc(d.name)}">`:'<div class="deck-art-fallback" style="height:100%;display:grid;place-items:center;font-size:52px">✧</div>';
+ const url=safeExternalUrl(d.decklistUrl||d.decklist||d.deckUrl);
+ const winPct=played?wins/played*100:0,drawPct=played?draws/played*100:0;
+ content.innerHTML=`<div class="deck-profile-hero"><div class="deck-profile-art">${image}<div class="deck-profile-art-info"><small>DECK · ${esc(d.commander||'COMANDANTE NÃO INFORMADO')}</small><h3>${esc(d.name)}</h3><span>${esc(colors)}</span>${url?`<a class="deck-profile-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">↗ Abrir decklist completa</a>`:''}</div></div><div class="deck-profile-metrics">
+ ${metric('◈','Aproveitamento',fmt(rate)+'%','vitórias + metade dos empates','metric-highlight')}
+ ${metric('⚔','Partidas',played,uses+' utilizações do deck')}
+ ${metric('✦','Vitórias',wins,'resultados positivos')}
+ ${metric('≋','Empates',draws,'partidas empatadas')}
+ ${metric('☠','Derrotas',losses,'partidas perdidas')}
+ ${metric('♟','Jogadores',players.length,'participantes que utilizaram')}
+ </div></div><div class="deck-profile-lower">
+ <div class="profile-card outcomes-card"><h3><span>◉</span> Distribuição de resultados</h3><div class="outcomes-summary"><div class="profile-donut" style="--win:${winPct}%;--draw:${winPct+drawPct}%"><b>${fmt(rate)}%</b></div><div><small>APROVEITAMENTO GERAL</small><strong>${fmt(rate)}%</strong><span>vitórias + metade dos empates</span></div></div><div class="result-bars">${[{label:'Vitórias',value:wins,color:'#e8a847'},{label:'Empates',value:draws,color:'#75a9cf'},{label:'Derrotas',value:losses,color:'#bd6671'}].map(x=>`<div class="result-bar-row"><b>${x.label}</b><div class="result-bar-track"><i style="width:${Math.max(0,x.value/Math.max(1,wins,draws,losses)*100)}%;background:${x.color}"></i></div><strong>${x.value}</strong></div>`).join('')}</div></div>
+ <div class="profile-card trend-card"><h3><span>⌁</span> Spark Evolution</h3><div class="spark-subtitle">Aproveitamento por data · últimos ${recent.length} registros</div>${trend.length?(()=>{const W=640,H=230,L=48,R=18,T=16,B=42,plotW=W-L-R,plotH=H-T-B,pts=trend.map((v,i)=>({x:L+(trend.length===1?plotW/2:i*plotW/(trend.length-1)),y:T+(100-v)*plotH/100,v,date:recent[i].date})),path=pts.map((q,i)=>(i?'L':'M')+q.x.toFixed(1)+','+q.y.toFixed(1)).join(' '),grid=[0,25,50,75,100].map(v=>{const y=T+(100-v)*plotH/100;return `<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="rgba(197,211,228,.14)" stroke-dasharray="4 5"/><text x="${L-10}" y="${y+4}" text-anchor="end" fill="#aeb9c8" font-size="11">${v}%</text>`}).join(''),dots=pts.map((q,i)=>`<circle cx="${q.x}" cy="${q.y}" r="5" fill="#ffd17a" stroke="#151d2a" stroke-width="3"><title>${fmt(q.v)}% · ${q.date}</title></circle><text x="${q.x}" y="${H-14}" text-anchor="middle" fill="#aeb9c8" font-size="10">${q.date?q.date.slice(5).replace('-','/') : i+1}</text>`).join('');return `<div class="spark-chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de aproveitamento do deck por data">${grid}<path d="${path}" fill="none" stroke="#e7aa4d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>${dots}</svg></div>`})():'<div class="profile-no-data">Ainda não há resultados neste período.</div>'}</div>
+ <div class="profile-card"><h3><span>♟</span> Jogadores que mais utilizaram</h3>${players.length?`<div class="deck-profile-players">${players.slice(0,6).map(x=>`<div class="deck-profile-player"><span>${esc(x.player.nick||x.player.name)}<small style="display:block;color:#9da9b8;margin-top:3px">${x.wins} vitórias · ${x.draws} empates · ${x.losses} derrotas</small></span><b>${x.uses} ${x.uses===1?'uso':'usos'}</b></div>`).join('')}</div>`:'<div class="profile-no-data">Nenhum jogador utilizou este deck no período.</div>'}</div>
+ <div class="profile-card"><h3><span>▤</span> Informações do deck</h3><div class="favorite-stats">Comandante: <b>${esc(d.commander||'Não informado')}</b><br>Identidade de cores: <b>${esc(colors)}</b><br>Utilizações registradas: <b>${uses}</b><br>Partidas com resultado: <b>${played}</b></div>${url?`<a class="deck-profile-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">↗ Abrir decklist completa</a>`:'<div class="profile-no-data">Adicione um link de decklist na edição do deck para disponibilizá-lo aqui.</div>'}</div>
+ </div>`;
+}
 document.getElementById('historyDate').addEventListener('change',e=>{selectedHistoryDate=e.target.value;renderMatchHistory()});
 document.getElementById('profilePlayer').addEventListener('change',e=>{selectedProfilePlayer=e.target.value;renderParticipantProfile()});
 document.getElementById('profileSeason').addEventListener('change',e=>{selectedProfileSeason=e.target.value;renderParticipantProfile()});
+document.getElementById('profileDeck').addEventListener('change',e=>{selectedProfileDeck=e.target.value;renderDeckProfile()});
+document.getElementById('profileDeckSeason').addEventListener('change',e=>{selectedProfileDeckSeason=e.target.value;renderDeckProfile()});
 function render(){
  const ranking=playerStats();document.getElementById('statPlayers').textContent=db.players.length;document.getElementById('statDecks').textContent=db.decks.length;document.getElementById('statMatches').textContent=db.matches.length;
  document.getElementById('leaderboard').innerHTML=ranking.length?(showFullRanking?ranking:ranking.slice(0,6)).map((p,i)=>`<tr><td class="rank">${i+1}</td><td>${p.photo?`<img class="avatar" src="${p.photo}" alt="">`:''}${esc(p.nick||p.name)}</td><td><b>${p.points}</b></td><td>${p.wins}</td><td>${p.draws}</td><td>${p.losses}</td><td>${p.rate.toFixed(1).replace('.',',')}% <span class="bar"><i style="width:${p.rate}%"></i></span></td></tr>`).join(''):'<tr><td colspan="7" class="empty">Cadastre participantes e lance pontuações para montar o ranking.</td></tr>';
  document.getElementById('rankingToggle').textContent=showFullRanking?'Mostrar apenas os 6 primeiros':'Ver classificação completa';
  document.getElementById('playersTable').innerHTML=ranking.length?ranking.map(p=>`<tr><td>${p.photo?`<img class="avatar" src="${p.photo}" alt="">`:''}<b>${esc(p.name)}</b><br><span class="muted">${esc(p.nick||'')}</span></td><td>${p.points}</td><td>${p.wins}</td><td>${p.draws}</td><td>${p.presences}</td><td><button class="btn secondary" onclick="editPlayer('${p.id}')">Editar</button> <button class="btn danger" onclick="deletePlayer('${p.id}')">Excluir</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">Nenhum participante cadastrado.</td></tr>';
  renderParticipantProfile();
- document.getElementById('decksCards').innerHTML=db.decks.length?db.decks.map(d=>{const st=deckStats(d),colors=(d.colors||[]).map(c=>`${colorSymbols[c]||''} ${colorNames[c]||c}`).join(' · ')||'Cores não definidas';return `<div class="deck-card">${d.photo?`<img class="deck-photo" src="${d.photo}" alt="${esc(d.name)}">`:''}<div class="deck-color">${(d.colors||[]).map(c=>colorSymbols[c]||'').join(' ')}</div><h3>${esc(d.name)}</h3><p>${esc(colors)}</p><p>Comandante: ${esc(d.commander||'Não informado')}</p><p>Utilizações: <b>${st.uses}</b> · Vitórias: <b>${st.wins}</b> · Empates: <b>${st.draws}</b> · Derrotas: <b>${st.losses}</b></p><p>Aproveitamento: <b>${st.rate.toFixed(1).replace('.',',')}%</b></p><button class="btn secondary" onclick="editDeck('${d.id}')">Editar</button> <button class="btn danger" onclick="deleteDeck('${d.id}')">Excluir</button></div>`}).join(''):'<div class="panel empty">Nenhum deck cadastrado.</div>';
+ renderDeckProfile();
+ document.getElementById('decksCards').innerHTML=db.decks.length?db.decks.map(d=>{const st=deckStats(d),colors=(d.colors||[]).map(c=>`${colorSymbols[c]||''} ${colorNames[c]||c}`).join(' · ')||'Cores não definidas';return `<div class="deck-card">${d.photo?`<img class="deck-photo" src="${d.photo}" alt="${esc(d.name)}">`:''}<div class="deck-color">${(d.colors||[]).map(c=>colorSymbols[c]||'').join(' ')}</div><h3>${esc(d.name)}</h3><p>${esc(colors)}</p><p>Comandante: ${esc(d.commander||'Não informado')}</p>${safeExternalUrl(d.decklistUrl||d.decklist||d.deckUrl)?`<p><a href="${esc(safeExternalUrl(d.decklistUrl||d.decklist||d.deckUrl))}" target="_blank" rel="noopener noreferrer">↗ Decklist completa</a></p>`:''}<p>Utilizações: <b>${st.uses}</b> · Vitórias: <b>${st.wins}</b> · Empates: <b>${st.draws}</b> · Derrotas: <b>${st.losses}</b></p><p>Aproveitamento: <b>${st.rate.toFixed(1).replace('.',',')}%</b></p><button class="btn secondary" onclick="editDeck('${d.id}')">Editar</button> <button class="btn danger" onclick="deleteDeck('${d.id}')">Excluir</button></div>`}).join(''):'<div class="panel empty">Nenhum deck cadastrado.</div>';
  const usage=db.decks.map(d=>({deck:d,...deckStats(d)})).sort((a,b)=>b.uses-a.uses);const hi=usage[0],lo=usage.length?usage[usage.length-1]:null;const deckTile=(item,label)=>item?`<div class="deck-highlight">${item.deck.photo?`<img src="${item.deck.photo}" alt="${esc(item.deck.name)}">`:'<div class="placeholder">▤</div>'}<div><div class="tag">${label}</div><h3>${esc(item.deck.name)}</h3><p>${item.uses} utilizações</p><p>${item.wins} vitórias · ${item.draws} empates · ${item.losses} derrotas</p><p>Aproveitamento: <b>${item.rate.toFixed(1).replace('.',',')}%</b></p></div></div>`:`<div class="deck-highlight"><div class="placeholder">▤</div><div><div class="tag">${label}</div><h3>Sem decks cadastrados</h3><p>Adicione decks para visualizar este destaque.</p></div></div>`;document.getElementById('deckHighlights').innerHTML=deckTile(hi,'Mais utilizado')+deckTile(lo&&lo.deck.id!==hi?.deck.id?lo:null,'Menos utilizado');
  renderMatchHistory();
  const seasons=[...db.seasons].sort((a,b)=>b.start.localeCompare(a.start));if(!selectedSeason||!seasons.some(s=>s.id===selectedSeason))selectedSeason=seasons.find(s=>today()>=s.start&&today()<=s.end)?.id||seasons[0]?.id||'';
@@ -1020,9 +1095,9 @@ async function selectPrecon(index){
 }
 document.getElementById('preconSearch').addEventListener('input',e=>renderPreconCatalog(e.target.value));
 renderPreconCatalog();
-document.getElementById('deckForm').onsubmit=async e=>{e.preventDefault();try{const colors=[...document.querySelectorAll('#deckColors input:checked')].map(x=>x.value);const photo=await imageToSquare(document.getElementById('deckPhoto').files[0]);db.decks.push({id:uid(),name:deckName.value.trim(),colors,commander:deckCommander.value.trim(),photo});e.target.reset();save()}catch(err){alert('Não foi possível processar a imagem.')}};
-function editDeck(id){const d=db.decks.find(x=>x.id===id);openModal('Editar deck',`<div class="field"><label>Nome</label><input id="editDeckName" value="${esc(d.name)}"></div><div class="field"><label>Comandante</label><input id="editCommander" value="${esc(d.commander)}"></div><div class="field"><label>Nova imagem (opcional)</label><input id="editDeckPhoto" type="file" accept="image/*"></div><div class="field"><label>Cores (W/U/B/R/G)</label><input id="editColors" value="${(d.colors||[]).join(',')}" placeholder="Ex.: R,G"></div><div class="modal-actions"><button class="btn" onclick="saveDeck('${id}')">Salvar</button></div>`)}
-async function saveDeck(id){const d=db.decks.find(x=>x.id===id);d.name=document.getElementById('editDeckName').value.trim();d.commander=document.getElementById('editCommander').value.trim();d.colors=document.getElementById('editColors').value.toUpperCase().split(/[,\s/]+/).filter(x=>colorNames[x]);const f=document.getElementById('editDeckPhoto').files[0];if(f)d.photo=await imageToSquare(f);closeModal();save()}
+document.getElementById('deckForm').onsubmit=async e=>{e.preventDefault();try{const colors=[...document.querySelectorAll('#deckColors input:checked')].map(x=>x.value);const photo=await imageToSquare(document.getElementById('deckPhoto').files[0]);db.decks.push({id:uid(),name:deckName.value.trim(),colors,commander:deckCommander.value.trim(),photo,decklistUrl:document.getElementById('deckListUrl').value.trim()});e.target.reset();save()}catch(err){alert('Não foi possível processar a imagem.')}};
+function editDeck(id){const d=db.decks.find(x=>x.id===id);openModal('Editar deck',`<div class="field"><label>Nome</label><input id="editDeckName" value="${esc(d.name)}"></div><div class="field"><label>Comandante</label><input id="editCommander" value="${esc(d.commander)}"></div><div class="field"><label>Link da decklist completa (opcional)</label><input id="editDeckListUrl" type="url" value="${esc(d.decklistUrl||d.decklist||d.deckUrl||'')}" placeholder="https://..."></div><div class="field"><label>Nova imagem (opcional)</label><input id="editDeckPhoto" type="file" accept="image/*"></div><div class="field"><label>Cores (W/U/B/R/G)</label><input id="editColors" value="${(d.colors||[]).join(',')}" placeholder="Ex.: R,G"></div><div class="modal-actions"><button class="btn" onclick="saveDeck('${id}')">Salvar</button></div>`)}
+async function saveDeck(id){const d=db.decks.find(x=>x.id===id);d.name=document.getElementById('editDeckName').value.trim();d.commander=document.getElementById('editCommander').value.trim();d.decklistUrl=document.getElementById('editDeckListUrl').value.trim();d.colors=document.getElementById('editColors').value.toUpperCase().split(/[,\s/]+/).filter(x=>colorNames[x]);const f=document.getElementById('editDeckPhoto').files[0];if(f)d.photo=await imageToSquare(f);closeModal();save()}
 function deleteDeck(id){if(confirm('Excluir deck? Os lançamentos históricos serão mantidos.')){db.decks=db.decks.filter(d=>d.id!==id);save()}}
 function playerOptions(){return [...db.players].sort((a,b)=>(a.nick||a.name||'').localeCompare(b.nick||b.name||'','pt-BR',{sensitivity:'base'})).map(p=>`<option value="${p.id}">${esc(p.nick||p.name)}</option>`).join('')}
 function deckOptions(){return [...db.decks].sort((a,b)=>(a.name||'').localeCompare(b.name||'','pt-BR',{sensitivity:'base'})).map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join('')}
