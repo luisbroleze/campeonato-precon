@@ -524,6 +524,52 @@ nav button.active{
 .precon-image-preview img{width:76px;height:76px;object-fit:cover;border-radius:6px;background:#111}
 .precon-image-preview span{font-size:12px;color:#d5dbe3}
 .precon-option img{object-fit:cover;background:#111}
+
+/* Painel individual de participante */
+.participant-profile{margin-top:20px;border:1px solid rgba(244,179,75,.35);border-radius:16px;overflow:hidden;background:linear-gradient(135deg,rgba(10,17,27,.97),rgba(22,29,42,.94));box-shadow:0 18px 48px rgba(0,0,0,.28)}
+.profile-heading{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 24px;background:linear-gradient(100deg,rgba(117,65,22,.32),rgba(10,18,29,.12)),url("assets/header-batalha-planeswalkers.webp") center 42%/cover;border-bottom:1px solid rgba(244,179,75,.24)}
+.profile-heading h2{font:700 clamp(21px,2.4vw,30px) Cinzel,serif;margin:5px 0;color:#ffe0a4}
+.profile-heading p{margin:0;color:#c5cbd4;font-size:13px}
+.profile-kicker{font-size:10px;letter-spacing:2px;color:#f4b34b;font-weight:800}
+.profile-controls{display:grid;grid-template-columns:auto minmax(160px,220px);align-items:center;gap:7px 10px;min-width:310px}
+.profile-controls label{font-size:11px;color:#d4b27b;text-transform:uppercase;letter-spacing:.8px}
+.profile-controls select{width:100%;min-width:0;background:#111b29;color:#f5f0e7;border:1px solid rgba(244,179,75,.45);border-radius:7px;padding:9px}
+.profile-empty{padding:42px 20px;text-align:center;color:#b8c0cb}
+.profile-hero{display:grid;grid-template-columns:minmax(190px,.72fr) minmax(0,2fr);gap:18px;padding:20px}
+.profile-person{position:relative;min-height:260px;border:1px solid rgba(244,179,75,.34);border-radius:12px;overflow:hidden;background:radial-gradient(circle at 50% 35%,rgba(255,153,53,.24),transparent 55%),linear-gradient(160deg,#273346,#101722);display:flex;flex-direction:column;justify-content:flex-end}
+.profile-person img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 25%;mask-image:linear-gradient(#000 65%,transparent 100%)}
+.profile-person .profile-initial{position:absolute;inset:0;display:grid;place-items:center;font:700 82px Cinzel;color:#f4b34b;text-shadow:0 4px 25px #000}
+.profile-person-info{position:relative;padding:18px;background:linear-gradient(0deg,rgba(5,9,15,.98),rgba(5,9,15,.05))}
+.profile-person-info h3{font:700 21px Cinzel;margin:0 0 4px;color:#fff0d0}
+.profile-person-info span{font-size:12px;color:#d0b27e}
+.profile-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.profile-metric{border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:15px 12px;background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.018));min-height:92px}
+.profile-metric small{display:block;color:#b9c2ce;font-size:10px;text-transform:uppercase;letter-spacing:.8px}
+.profile-metric strong{display:block;color:#ffcf7d;font:700 clamp(22px,2.5vw,31px) Cinzel;margin-top:7px}
+.profile-metric em{font-style:normal;color:#aeb8c5;font-size:10px}
+.profile-lower{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 20px 20px}
+.profile-card{border:1px solid rgba(255,255,255,.11);border-radius:12px;background:rgba(4,10,18,.45);padding:16px;min-width:0}
+.profile-card h3{font:600 15px Cinzel;color:#f2c77e;margin:0 0 14px}
+.profile-outcomes{display:grid;grid-template-columns:116px 1fr;gap:16px;align-items:center}
+.profile-donut{width:112px;height:112px;border-radius:50%;position:relative;background:conic-gradient(#e8a847 0 var(--win),#75a9cf var(--win) var(--draw),#bd6671 var(--draw) 100%);display:grid;place-items:center}
+.profile-donut:after{content:"";position:absolute;inset:12px;border-radius:50%;background:#111a27}
+.profile-donut b{z-index:1;font:700 21px Cinzel;color:#ffe0a4}
+.profile-legend{display:grid;gap:10px}
+.profile-legend div{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#d8dce2}
+.profile-legend span:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;background:var(--dot)}
+.profile-trend{display:flex;align-items:end;gap:5px;height:110px;padding:8px 2px 0;border-bottom:1px solid rgba(255,255,255,.14)}
+.profile-trend span{flex:1;min-width:5px;border-radius:4px 4px 0 0;background:linear-gradient(0deg,#9c571f,#f4bd62);position:relative;min-height:3px}
+.profile-trend span i{position:absolute;bottom:-19px;left:50%;transform:translateX(-50%);font-size:9px;color:#aeb8c5;font-style:normal}
+.profile-list{display:grid;gap:10px}
+.profile-list-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;font-size:12px;color:#e1e4e9}
+.profile-list-row small{display:block;color:#9da9b8;margin-top:3px}
+.profile-bar{height:5px;border-radius:5px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:6px}
+.profile-bar i{display:block;height:100%;background:linear-gradient(90deg,#9b5a25,#f4bd62);border-radius:5px}
+.profile-favorite{border-color:rgba(244,179,75,.5);background:linear-gradient(130deg,rgba(116,69,26,.24),rgba(4,10,18,.5))}
+.profile-favorite .favorite-name{font:700 19px Cinzel;color:#ffe0a4;margin:2px 0 7px}
+.profile-favorite .favorite-stats{font-size:12px;color:#c4ccd5;line-height:1.8}
+.profile-no-data{font-size:12px;color:#aeb8c5;padding:8px 0}
+@media(max-width:760px){.profile-heading{align-items:stretch;flex-direction:column}.profile-controls{min-width:0;grid-template-columns:90px minmax(0,1fr)}.profile-hero{grid-template-columns:1fr}.profile-person{min-height:240px}.profile-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-lower{grid-template-columns:1fr}.profile-outcomes{grid-template-columns:100px 1fr}.profile-donut{width:96px;height:96px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -575,6 +621,10 @@ nav button.active{
    </form>
   </div></div>
   <div class="panel" style="margin-top:16px"><div class="panel-title">Jogadores cadastrados</div><div class="table-wrap"><table><thead><tr><th>Participante</th><th>Pontos</th><th>Vitórias</th><th>Empates</th><th>Presenças</th><th>Ações</th></tr></thead><tbody id="playersTable"></tbody></table></div></div>
+  <div class="participant-profile" id="participantProfile">
+   <div class="profile-heading"><div><div class="profile-kicker">ARQUIVO DO PLANESWALKER</div><h2>Estatísticas individuais</h2><p>Selecione um participante para consultar seu histórico no campeonato.</p></div><div class="profile-controls"><label for="profilePlayer">Participante</label><select id="profilePlayer"><option value="">Selecione um participante</option></select><label for="profileSeason">Período</label><select id="profileSeason"><option value="all">Histórico completo</option></select></div></div>
+   <div id="profileContent"><div class="profile-empty">Escolha um participante para revelar suas estatísticas.</div></div>
+  </div>
  </section>
  <section id="decks" class="section">
   <div class="page-head"><h1>Decks Precon</h1><p>Cadastre decks, combinações de cores e acompanhe frequência de uso.</p></div>
@@ -705,11 +755,58 @@ function imageToSquare(file){return new Promise((resolve,reject)=>{if(!file){res
 function playerStats(){return db.players.map(p=>{const rows=db.matches.filter(m=>m.playerId===p.id);const wins=rows.reduce((a,m)=>a+Number(m.wins||0),0),draws=rows.reduce((a,m)=>a+Number(m.draws||0),0),losses=rows.reduce((a,m)=>a+Number(m.losses||0),0),presences=rows.filter(m=>m.present).length,points=rows.reduce((a,m)=>a+Number(m.wins||0)*2+Number(m.draws||0)+(m.present?1:0)+Number(m.legacyAdjustment||0),0),rate=(wins+draws+losses)?(wins+draws*0.5)/(wins+draws+losses)*100:0;return {...p,wins,draws,losses,presences,points,played:rows.length,rate}}).sort((a,b)=>b.points-a.points||b.wins-a.wins)}
 function deckStats(d){const rows=db.matches.filter(m=>m.deckId===d.id);const wins=rows.reduce((a,m)=>a+Number(m.wins||0),0),losses=rows.reduce((a,m)=>a+Number(m.losses||0),0),draws=rows.reduce((a,m)=>a+Number(m.draws||0),0);return {uses:rows.length,wins,losses,draws,rate:(wins+draws+losses)?(wins+draws*0.5)/(wins+draws+losses)*100:0}}
 function seasonForDate(date){return db.seasons.find(s=>date>=s.start&&date<=s.end)}
+
+let selectedProfilePlayer='';
+let selectedProfileSeason='all';
+function renderParticipantProfile(){
+ const playerSelect=document.getElementById('profilePlayer'),seasonSelect=document.getElementById('profileSeason'),content=document.getElementById('profileContent');
+ const players=[...db.players].sort((a,b)=>(a.nick||a.name||'').localeCompare(b.nick||b.name||'','pt-BR',{sensitivity:'base'}));
+ if(!selectedProfilePlayer||!players.some(p=>p.id===selectedProfilePlayer))selectedProfilePlayer=players[0]?.id||'';
+ playerSelect.innerHTML='<option value="">Selecione um participante</option>'+players.map(p=>`<option value="${p.id}" ${p.id===selectedProfilePlayer?'selected':''}>${esc(p.nick||p.name)}</option>`).join('');
+ const seasons=[...db.seasons].sort((a,b)=>b.start.localeCompare(a.start));
+ seasonSelect.innerHTML='<option value="all">Histórico completo</option>'+seasons.map(x=>`<option value="${x.id}" ${x.id===selectedProfileSeason?'selected':''}>${esc(x.name)}</option>`).join('');
+ if(!players.length){content.innerHTML='<div class="profile-empty">Cadastre participantes para visualizar estatísticas individuais.</div>';return}
+ const p=players.find(x=>x.id===selectedProfilePlayer);if(!p){content.innerHTML='<div class="profile-empty">Selecione um participante.</div>';return}
+ const season=seasons.find(x=>x.id===selectedProfileSeason);
+ let rows=db.matches.filter(m=>m.playerId===p.id);
+ if(season)rows=rows.filter(m=>m.date>=season.start&&m.date<=season.end);
+ rows.sort((a,b)=>a.date.localeCompare(b.date));
+ const sum=k=>rows.reduce((n,m)=>n+Number(m[k]||0),0);
+ const wins=sum('wins'),draws=sum('draws'),losses=sum('losses'),played=wins+draws+losses,rate=played?(wins+draws*.5)/played*100:0,presences=rows.filter(m=>m.present).length;
+ const partnerCounts={};
+ rows.filter(m=>m.groupId).forEach(m=>{const group=db.matches.filter(x=>x.groupId===m.groupId);group.filter(x=>x.playerId!==p.id).forEach(x=>{const partner=db.players.find(y=>y.id===x.playerId);if(partner){const item=partnerCounts[partner.id]||(partnerCounts[partner.id]={player:partner,games:0,wins:0,draws:0,losses:0});item.games++;item.wins+=Number(m.wins||0);item.draws+=Number(m.draws||0);item.losses+=Number(m.losses||0)}})});
+ const partners=Object.values(partnerCounts).sort((a,b)=>b.games-a.games||b.wins-a.wins),favorite=partners[0];
+ const deckCounts={};rows.forEach(m=>{if(!m.deckId)return;const d=db.decks.find(x=>x.id===m.deckId);if(d){const item=deckCounts[d.id]||(deckCounts[d.id]={deck:d,uses:0});item.uses++}});
+ const decks=Object.values(deckCounts).sort((a,b)=>b.uses-a.uses),maxDeck=decks[0]?.uses||1;
+ const recent=rows.slice(-10),trend=recent.map(m=>{const n=Number(m.wins||0)+Number(m.draws||0)+Number(m.losses||0);return n?(Number(m.wins||0)+Number(m.draws||0)*.5)/n*100:0});
+ const winPct=played?wins/played*100:0,drawPct=played?draws/played*100:0;
+ const photo=p.photo?`<img src="${p.photo}" alt="Foto de ${esc(p.name)}">`:`<div class="profile-initial">${esc((p.nick||p.name||'?').trim().charAt(0).toUpperCase())}</div>`;
+ const fmt=n=>Number(n).toLocaleString('pt-BR',{maximumFractionDigits:1});
+ content.innerHTML=`<div class="profile-hero"><div class="profile-person">${photo}<div class="profile-person-info"><h3>${esc(p.nick||p.name)}</h3><span>${esc(p.nick&&p.nick!==p.name?p.name:'CAMPEONATO PRECON')}</span></div></div><div class="profile-metrics">
+ <div class="profile-metric"><small>Aproveitamento</small><strong>${fmt(rate)}%</strong><em>vitórias + metade dos empates</em></div>
+ <div class="profile-metric"><small>Partidas</small><strong>${played}</strong><em>${presences} presenças registradas</em></div>
+ <div class="profile-metric"><small>Vitórias</small><strong>${wins}</strong><em>resultados positivos</em></div>
+ <div class="profile-metric"><small>Empates</small><strong>${draws}</strong><em>partidas empatadas</em></div>
+ <div class="profile-metric"><small>Derrotas</small><strong>${losses}</strong><em>partidas perdidas</em></div>
+ <div class="profile-metric"><small>Pontos</small><strong>${rows.reduce((n,m)=>n+Number(m.wins||0)*2+Number(m.draws||0)+(m.present?1:0)+Number(m.legacyAdjustment||0),0)}</strong><em>pontuação acumulada</em></div>
+ <div class="profile-metric"><small>Decks utilizados</small><strong>${decks.length}</strong><em>deck(s) diferente(s)</em></div>
+ <div class="profile-metric"><small>Duplas</small><strong>${rows.filter(m=>m.groupId).length}</strong><em>registros em partidas de dupla</em></div>
+ </div></div>
+ <div class="profile-lower">
+ <div class="profile-card"><h3>Distribuição de resultados</h3><div class="profile-outcomes"><div class="profile-donut" style="--win:${winPct}%;--draw:${winPct+drawPct}%"><b>${fmt(rate)}%</b></div><div class="profile-legend"><div><span style="--dot:#e8a847">Vitórias</span><b>${wins}</b></div><div><span style="--dot:#75a9cf">Empates</span><b>${draws}</b></div><div><span style="--dot:#bd6671">Derrotas</span><b>${losses}</b></div></div></div></div>
+ <div class="profile-card"><h3>Forma recente · últimos ${recent.length} registros</h3>${trend.length?`<div class="profile-trend">${trend.map((v,i)=>`<span style="height:${Math.max(4,v)}%" title="${fmt(v)}%"><i>${i+1}</i></span>`).join('')}</div>`:'<div class="profile-no-data">Ainda não há resultados neste período.</div>'}</div>
+ <div class="profile-card profile-favorite"><h3>Dupla mais frequente</h3>${favorite?`<div class="favorite-name">♛ ${esc(favorite.player.nick||favorite.player.name)}</div><div class="favorite-stats">${favorite.games} partidas juntos · ${favorite.wins} vitórias · ${favorite.draws} empates · ${favorite.losses} derrotas<br>Aproveitamento da dupla: ${fmt((favorite.wins+favorite.draws*.5)/(favorite.wins+favorite.draws+favorite.losses||1)*100)}%</div>`:'<div class="profile-no-data">Nenhuma partida em dupla registrada neste período.</div>'}</div>
+ <div class="profile-card"><h3>Decks utilizados</h3>${decks.length?`<div class="profile-list">${decks.map(x=>`<div><div class="profile-list-row"><span>${esc(x.deck.name)}<small>${x.uses} utilização(ões)</small></span><b>${Math.round(x.uses/maxDeck*100)}%</b></div><div class="profile-bar"><i style="width:${x.uses/maxDeck*100}%"></i></div></div>`).join('')}</div>`:'<div class="profile-no-data">Nenhum deck registrado neste período.</div>'}</div>
+ </div>`;
+}
+document.getElementById('profilePlayer').addEventListener('change',e=>{selectedProfilePlayer=e.target.value;renderParticipantProfile()});
+document.getElementById('profileSeason').addEventListener('change',e=>{selectedProfileSeason=e.target.value;renderParticipantProfile()});
 function render(){
  const ranking=playerStats();document.getElementById('statPlayers').textContent=db.players.length;document.getElementById('statDecks').textContent=db.decks.length;document.getElementById('statMatches').textContent=db.matches.length;
  document.getElementById('leaderboard').innerHTML=ranking.length?(showFullRanking?ranking:ranking.slice(0,6)).map((p,i)=>`<tr><td class="rank">${i+1}</td><td>${p.photo?`<img class="avatar" src="${p.photo}" alt="">`:''}${esc(p.nick||p.name)}</td><td><b>${p.points}</b></td><td>${p.wins}</td><td>${p.draws}</td><td>${p.losses}</td><td>${p.rate.toFixed(1).replace('.',',')}% <span class="bar"><i style="width:${p.rate}%"></i></span></td></tr>`).join(''):'<tr><td colspan="7" class="empty">Cadastre participantes e lance pontuações para montar o ranking.</td></tr>';
  document.getElementById('rankingToggle').textContent=showFullRanking?'Mostrar apenas os 6 primeiros':'Ver classificação completa';
  document.getElementById('playersTable').innerHTML=ranking.length?ranking.map(p=>`<tr><td>${p.photo?`<img class="avatar" src="${p.photo}" alt="">`:''}<b>${esc(p.name)}</b><br><span class="muted">${esc(p.nick||'')}</span></td><td>${p.points}</td><td>${p.wins}</td><td>${p.draws}</td><td>${p.presences}</td><td><button class="btn secondary" onclick="editPlayer('${p.id}')">Editar</button> <button class="btn danger" onclick="deletePlayer('${p.id}')">Excluir</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">Nenhum participante cadastrado.</td></tr>';
+ renderParticipantProfile();
  document.getElementById('decksCards').innerHTML=db.decks.length?db.decks.map(d=>{const st=deckStats(d),colors=(d.colors||[]).map(c=>`${colorSymbols[c]||''} ${colorNames[c]||c}`).join(' · ')||'Cores não definidas';return `<div class="deck-card">${d.photo?`<img class="deck-photo" src="${d.photo}" alt="${esc(d.name)}">`:''}<div class="deck-color">${(d.colors||[]).map(c=>colorSymbols[c]||'').join(' ')}</div><h3>${esc(d.name)}</h3><p>${esc(colors)}</p><p>Comandante: ${esc(d.commander||'Não informado')}</p><p>Utilizações: <b>${st.uses}</b> · Vitórias: <b>${st.wins}</b> · Empates: <b>${st.draws}</b> · Derrotas: <b>${st.losses}</b></p><p>Aproveitamento: <b>${st.rate.toFixed(1).replace('.',',')}%</b></p><button class="btn secondary" onclick="editDeck('${d.id}')">Editar</button> <button class="btn danger" onclick="deleteDeck('${d.id}')">Excluir</button></div>`}).join(''):'<div class="panel empty">Nenhum deck cadastrado.</div>';
  const usage=db.decks.map(d=>({deck:d,...deckStats(d)})).sort((a,b)=>b.uses-a.uses);const hi=usage[0],lo=usage.length?usage[usage.length-1]:null;const deckTile=(item,label)=>item?`<div class="deck-highlight">${item.deck.photo?`<img src="${item.deck.photo}" alt="${esc(item.deck.name)}">`:'<div class="placeholder">▤</div>'}<div><div class="tag">${label}</div><h3>${esc(item.deck.name)}</h3><p>${item.uses} utilizações</p><p>${item.wins} vitórias · ${item.draws} empates · ${item.losses} derrotas</p><p>Aproveitamento: <b>${item.rate.toFixed(1).replace('.',',')}%</b></p></div></div>`:`<div class="deck-highlight"><div class="placeholder">▤</div><div><div class="tag">${label}</div><h3>Sem decks cadastrados</h3><p>Adicione decks para visualizar este destaque.</p></div></div>`;document.getElementById('deckHighlights').innerHTML=deckTile(hi,'Mais utilizado')+deckTile(lo&&lo.deck.id!==hi?.deck.id?lo:null,'Menos utilizado');
  const historyGroups=[];const seenHistory=new Set();[...db.matches].sort((a,b)=>b.date.localeCompare(a.date)).forEach(m=>{const key=m.groupId||m.id;if(seenHistory.has(key))return;seenHistory.add(key);historyGroups.push(db.matches.filter(x=>m.groupId?x.groupId===m.groupId:x.id===m.id))});document.getElementById('matchesTable').innerHTML=historyGroups.length?historyGroups.map(group=>{const m=group[0],names=group.map(x=>{const p=db.players.find(y=>y.id===x.playerId);return esc(p?.nick||p?.name||'Participante removido')}).join(' + '),decks=group.map(x=>{const d=db.decks.find(y=>y.id===x.deckId);return d?.name?esc(d.name):'—'}).join(' / '),pts=Number(m.wins||0)*2+Number(m.draws||0)+(m.present?1:0)+Number(m.legacyAdjustment||0);return `<tr><td>${m.date}</td><td>${names}${group.length===2?'<span class="tag">Dupla</span>':''}</td><td>${decks}</td><td>${m.wins||0}</td><td>${m.draws||0}</td><td>${m.losses||0}</td><td>${m.present?'Sim':'Não'}</td><td><b>${pts}</b></td><td><button class="btn secondary" onclick="editScore('${m.id}')">Editar</button> <button class="btn danger" onclick="deleteScore('${m.id}')">Excluir</button></td></tr>`}).join(''):'<tr><td colspan="9" class="empty">Nenhum lançamento registrado.</td></tr>';
