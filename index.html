@@ -642,6 +642,29 @@ nav button.active{
 .deck-art-meta b{color:#f4c878;font-size:11px}
 @media(max-width:600px){.players-collapsible>summary{padding:14px}.spark-chart{min-height:130px}.deck-art-image{height:112px}.deck-art-name{font-size:10px}}
 
+
+/* Fundos temáticos dos gráficos */
+.outcomes-card,.trend-card{position:relative;isolation:isolate;overflow:hidden;background-size:cover;background-position:center;background-repeat:no-repeat}
+.outcomes-card{background-image:linear-gradient(105deg,rgba(5,10,18,.82),rgba(5,10,18,.72)),url("assets/banner-decks.webp")}
+.trend-card{background-image:linear-gradient(105deg,rgba(5,10,18,.82),rgba(5,10,18,.72)),url("assets/banner-partidas.webp")}
+.outcomes-card h3,.trend-card h3,.outcomes-card>*,.trend-card>*{position:relative}
+.outcomes-summary{display:flex;align-items:center;gap:18px;margin:2px 0 16px}
+.outcomes-summary>div:last-child{display:flex;flex-direction:column;gap:3px}
+.outcomes-summary small{font-size:9px;letter-spacing:1.3px;color:#c2ccda}
+.outcomes-summary strong{font:700 24px Cinzel;color:#ffd17a}
+.outcomes-summary span{font-size:10px;color:#c0cad7}
+.result-bars{display:flex;flex-direction:column;gap:11px}
+.result-bar-row{display:grid;grid-template-columns:72px minmax(60px,1fr) 28px;align-items:center;gap:10px;font-size:11px}
+.result-bar-row>b{color:#e5eaf1;font-size:11px}
+.result-bar-row>strong{text-align:right;color:#fff;font-size:12px}
+.result-bar-track{height:10px;border-radius:20px;background:rgba(255,255,255,.13);overflow:hidden}
+.result-bar-track i{display:block;height:100%;border-radius:20px;box-shadow:0 0 10px currentColor}
+.history-title{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.history-title label{display:flex;align-items:center;gap:9px;font:500 11px Inter,Arial,sans-serif;color:#c4cfdd}
+.history-title input{min-width:150px;padding:8px 10px;border:1px solid rgba(244,179,75,.4);border-radius:7px;background:#111b29;color:#fff;color-scheme:dark}
+.history-date-caption{padding:0 16px 12px;color:#aeb9c8;font-size:10px}
+@media(max-width:600px){.history-title{align-items:flex-start;flex-direction:column}.history-title label{width:100%;justify-content:space-between}.history-title input{min-width:0;flex:1}.outcomes-summary{gap:12px}.result-bar-row{grid-template-columns:60px minmax(40px,1fr) 22px;gap:7px}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -728,7 +751,7 @@ nav button.active{
     <div class="actions"><button type="button" class="btn secondary" id="addScoreRow">+ Adicionar participante</button><button class="btn">Salvar pontuações</button></div>
    </form>
   </div></div>
-  <div class="panel" style="margin-top:16px"><div class="panel-title">Histórico de pontuação</div><div class="table-wrap"><table><thead><tr><th>Data</th><th>Participante</th><th>Deck</th><th>Vitórias</th><th>Empates</th><th>Derrotas</th><th>Presença</th><th>Pontos</th><th>Ações</th></tr></thead><tbody id="matchesTable"></tbody></table></div></div>
+  <div class="panel history-panel" style="margin-top:16px"><div class="panel-title history-title"><span>Histórico de pontuação</span><label for="historyDate">Data do registro <input id="historyDate" type="date"></label></div><div class="history-date-caption" id="historyDateCaption"></div><div class="table-wrap"><table><thead><tr><th>Data</th><th>Participante</th><th>Deck</th><th>Vitórias</th><th>Empates</th><th>Derrotas</th><th>Presença</th><th>Pontos</th><th>Ações</th></tr></thead><tbody id="matchesTable"></tbody></table></div></div>
  </section>
  <section id="prizes" class="section">
   <div class="page-head"><h1>O Tesouro</h1><p>Crie temporadas com períodos próprios e acompanhe o prêmio acumulado.</p></div>
@@ -764,7 +787,20 @@ if(!db){
  db.players.forEach(p=>p.photo=p.photo||'');db.decks.forEach(d=>{d.colors=d.colors||((d.color==='🌈')?['W','U','B','R','G']:[]);d.photo=d.photo||''});
 }
 let selectedSeason='';
+let selectedHistoryDate='';
 let showFullRanking=false;
+function renderMatchHistory(){
+ const dates=[...new Set(db.matches.map(m=>m.date).filter(Boolean))].sort((a,b)=>b.localeCompare(a));
+ const picker=document.getElementById('historyDate');
+ if(!selectedHistoryDate||!dates.includes(selectedHistoryDate))selectedHistoryDate=dates[0]||'';
+ if(picker){picker.value=selectedHistoryDate;picker.max=dates[0]||'';picker.min=dates[dates.length-1]||''}
+ const caption=document.getElementById('historyDateCaption');
+ if(caption)caption.textContent=selectedHistoryDate?`Exibindo partidas registradas em ${selectedHistoryDate.split('-').reverse().join('/')}`:'Nenhuma data de registro disponível.';
+ const matches=selectedHistoryDate?db.matches.filter(m=>m.date===selectedHistoryDate):[];
+ const groups=[],seen=new Set();
+ [...matches].sort((a,b)=>b.date.localeCompare(a.date)).forEach(m=>{const key=m.groupId||m.id;if(seen.has(key))return;seen.add(key);groups.push(matches.filter(x=>m.groupId?x.groupId===m.groupId:x.id===m.id))});
+ document.getElementById('matchesTable').innerHTML=groups.length?groups.map(group=>{const m=group[0],names=group.map(x=>{const p=db.players.find(y=>y.id===x.playerId);return esc(p?.nick||p?.name||'Participante removido')}).join(' + '),decks=group.map(x=>{const d=db.decks.find(y=>y.id===x.deckId);return d?.name?esc(d.name):'—'}).join(' / '),pts=Number(m.wins||0)*2+Number(m.draws||0)+(m.present?1:0)+Number(m.legacyAdjustment||0);return `<tr><td>${m.date}</td><td>${names}${group.length===2?'<span class="tag">Dupla</span>':''}</td><td>${decks}</td><td>${m.wins||0}</td><td>${m.draws||0}</td><td>${m.losses||0}</td><td>${m.present?'Sim':'Não'}</td><td><b>${pts}</b></td><td><button class="btn secondary" onclick="editScore('${m.id}')">Editar</button> <button class="btn danger" onclick="deleteScore('${m.id}')">Excluir</button></td></tr>`}).join(''):'<tr><td colspan="9" class="empty">Nenhum lançamento registrado nesta data.</td></tr>';
+}
 function toggleFullRanking(){showFullRanking=!showFullRanking;render();}
 const CLOUD_CONFIG_KEY='preconSupabaseConfig';
 const DEPLOYED_SUPABASE_CONFIG={url:'https://tlesuemmlsqlbpsmqxvn.supabase.co',key:'sb_publishable_xO9vR1tr4FMj1L6cH_loBg_ZI62yY5y'};
@@ -867,12 +903,13 @@ function renderParticipantProfile(){
  ${metric('♟','Duplas',rows.filter(m=>m.groupId).length,'registros em partidas de dupla')}
  </div></div>
  <div class="profile-lower">
- <div class="profile-card outcomes-card"><h3><span>◉</span> Distribuição de resultados</h3><div class="profile-outcomes"><div class="profile-donut" style="--win:${winPct}%;--draw:${winPct+drawPct}%"><b>${fmt(rate)}%</b></div><div class="profile-legend"><div><span style="--dot:#e8a847">Vitórias</span><b>${wins}</b></div><div><span style="--dot:#75a9cf">Empates</span><b>${draws}</b></div><div><span style="--dot:#bd6671">Derrotas</span><b>${losses}</b></div></div></div></div>
+ <div class="profile-card outcomes-card"><h3><span>◉</span> Distribuição de resultados</h3><div class="outcomes-summary"><div class="profile-donut" style="--win:${winPct}%;--draw:${winPct+drawPct}%"><b>${fmt(rate)}%</b></div><div><small>APROVEITAMENTO GERAL</small><strong>${fmt(rate)}%</strong><span>vitórias + metade dos empates</span></div></div><div class="result-bars">${[{label:'Vitórias',value:wins,color:'#e8a847'},{label:'Empates',value:draws,color:'#75a9cf'},{label:'Derrotas',value:losses,color:'#bd6671'}].map(x=>`<div class="result-bar-row"><b>${x.label}</b><div class="result-bar-track"><i style="width:${Math.max(0,x.value/Math.max(1,wins,draws,losses)*100)}%;background:${x.color}"></i></div><strong>${x.value}</strong></div>`).join('')}</div></div>
  <div class="profile-card trend-card"><h3><span>⌁</span> Spark Evolution</h3><div class="spark-subtitle">Aproveitamento por data · últimos ${recent.length} registros</div>${trend.length?(()=>{const W=640,H=230,L=48,R=18,T=16,B=42,plotW=W-L-R,plotH=H-T-B;const pts=trend.map((v,i)=>({x:L+(trend.length===1?plotW/2:i*plotW/(trend.length-1)),y:T+(100-v)*plotH/100,v,date:recent[i].date}));const path=pts.map((q,i)=>(i?'L':'M')+q.x.toFixed(1)+','+q.y.toFixed(1)).join(' ');const grid=[0,25,50,75,100].map(v=>{const y=T+(100-v)*plotH/100;return `<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="rgba(197,211,228,.14)" stroke-dasharray="4 5"/><text x="${L-10}" y="${y+4}" text-anchor="end" fill="#aeb9c8" font-size="11">${v}%</text>`}).join('');const dots=pts.map((q,i)=>`<circle cx="${q.x}" cy="${q.y}" r="5" fill="#ffd17a" stroke="#151d2a" stroke-width="3"><title>${fmt(q.v)}% · ${q.date}</title></circle><text x="${q.x}" y="${H-14}" text-anchor="middle" fill="#aeb9c8" font-size="10">${q.date? q.date.slice(5).replace('-','/') : i+1}</text>`).join('');return `<div class="spark-chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de aproveitamento por data, de zero a cem por cento">${grid}<path d="${path}" fill="none" stroke="#e7aa4d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>${dots}</svg></div>`})():'<div class="profile-no-data">Ainda não há resultados neste período.</div>'}</div>
  <div class="profile-card profile-favorite"><h3><span>♛</span> Dupla mais frequente</h3>${favorite?`<div class="duo-feature"><div class="duo-portraits"><div class="duo-portrait main-portrait">${partnerPhoto(p)}</div><div class="duo-portrait">${partnerPhoto(favorite.player)}</div><span class="duo-cross">✦</span></div><div class="duo-info"><div class="duo-kicker">PARCERIA EM DESTAQUE</div><div class="favorite-name">${esc(favorite.player.nick||favorite.player.name)}</div><div class="favorite-stats">${favorite.games} partidas juntos · ${favorite.wins} vitórias · ${favorite.draws} empates · ${favorite.losses} derrotas<br>Aproveitamento da dupla: <b>${fmt((favorite.wins+favorite.draws*.5)/(favorite.wins+favorite.draws+favorite.losses||1)*100)}%</b></div></div></div>`:'<div class="profile-no-data">Nenhuma partida em dupla registrada neste período.</div>'}</div>
  <div class="profile-card decks-feature"><h3><span>▤</span> Os 3 decks mais utilizados</h3>${decks.length?`<div class="deck-art-grid">${decks.slice(0,3).map((x,i)=>`<div class="deck-art-card"><div class="deck-art-image">${x.deck.photo?`<img src="${x.deck.photo}" alt="${esc(x.deck.name)}">`:'<div class="deck-art-fallback">✧</div>'}<span class="deck-rank">0${i+1}</span></div><div class="deck-art-name">${esc(x.deck.name)}</div><div class="deck-art-meta">${x.uses} ${x.uses===1?'utilização':'utilizações'} <b>${Math.round(x.uses/maxDeck*100)}%</b></div><div class="deck-art-bar"><i style="width:${x.uses/maxDeck*100}%"></i></div></div>`).join('')}</div>`:'<div class="profile-no-data">Nenhum deck registrado neste período.</div>'}</div>
  </div>`;
 }
+document.getElementById('historyDate').addEventListener('change',e=>{selectedHistoryDate=e.target.value;renderMatchHistory()});
 document.getElementById('profilePlayer').addEventListener('change',e=>{selectedProfilePlayer=e.target.value;renderParticipantProfile()});
 document.getElementById('profileSeason').addEventListener('change',e=>{selectedProfileSeason=e.target.value;renderParticipantProfile()});
 function render(){
@@ -883,7 +920,7 @@ function render(){
  renderParticipantProfile();
  document.getElementById('decksCards').innerHTML=db.decks.length?db.decks.map(d=>{const st=deckStats(d),colors=(d.colors||[]).map(c=>`${colorSymbols[c]||''} ${colorNames[c]||c}`).join(' · ')||'Cores não definidas';return `<div class="deck-card">${d.photo?`<img class="deck-photo" src="${d.photo}" alt="${esc(d.name)}">`:''}<div class="deck-color">${(d.colors||[]).map(c=>colorSymbols[c]||'').join(' ')}</div><h3>${esc(d.name)}</h3><p>${esc(colors)}</p><p>Comandante: ${esc(d.commander||'Não informado')}</p><p>Utilizações: <b>${st.uses}</b> · Vitórias: <b>${st.wins}</b> · Empates: <b>${st.draws}</b> · Derrotas: <b>${st.losses}</b></p><p>Aproveitamento: <b>${st.rate.toFixed(1).replace('.',',')}%</b></p><button class="btn secondary" onclick="editDeck('${d.id}')">Editar</button> <button class="btn danger" onclick="deleteDeck('${d.id}')">Excluir</button></div>`}).join(''):'<div class="panel empty">Nenhum deck cadastrado.</div>';
  const usage=db.decks.map(d=>({deck:d,...deckStats(d)})).sort((a,b)=>b.uses-a.uses);const hi=usage[0],lo=usage.length?usage[usage.length-1]:null;const deckTile=(item,label)=>item?`<div class="deck-highlight">${item.deck.photo?`<img src="${item.deck.photo}" alt="${esc(item.deck.name)}">`:'<div class="placeholder">▤</div>'}<div><div class="tag">${label}</div><h3>${esc(item.deck.name)}</h3><p>${item.uses} utilizações</p><p>${item.wins} vitórias · ${item.draws} empates · ${item.losses} derrotas</p><p>Aproveitamento: <b>${item.rate.toFixed(1).replace('.',',')}%</b></p></div></div>`:`<div class="deck-highlight"><div class="placeholder">▤</div><div><div class="tag">${label}</div><h3>Sem decks cadastrados</h3><p>Adicione decks para visualizar este destaque.</p></div></div>`;document.getElementById('deckHighlights').innerHTML=deckTile(hi,'Mais utilizado')+deckTile(lo&&lo.deck.id!==hi?.deck.id?lo:null,'Menos utilizado');
- const historyGroups=[];const seenHistory=new Set();[...db.matches].sort((a,b)=>b.date.localeCompare(a.date)).forEach(m=>{const key=m.groupId||m.id;if(seenHistory.has(key))return;seenHistory.add(key);historyGroups.push(db.matches.filter(x=>m.groupId?x.groupId===m.groupId:x.id===m.id))});document.getElementById('matchesTable').innerHTML=historyGroups.length?historyGroups.map(group=>{const m=group[0],names=group.map(x=>{const p=db.players.find(y=>y.id===x.playerId);return esc(p?.nick||p?.name||'Participante removido')}).join(' + '),decks=group.map(x=>{const d=db.decks.find(y=>y.id===x.deckId);return d?.name?esc(d.name):'—'}).join(' / '),pts=Number(m.wins||0)*2+Number(m.draws||0)+(m.present?1:0)+Number(m.legacyAdjustment||0);return `<tr><td>${m.date}</td><td>${names}${group.length===2?'<span class="tag">Dupla</span>':''}</td><td>${decks}</td><td>${m.wins||0}</td><td>${m.draws||0}</td><td>${m.losses||0}</td><td>${m.present?'Sim':'Não'}</td><td><b>${pts}</b></td><td><button class="btn secondary" onclick="editScore('${m.id}')">Editar</button> <button class="btn danger" onclick="deleteScore('${m.id}')">Excluir</button></td></tr>`}).join(''):'<tr><td colspan="9" class="empty">Nenhum lançamento registrado.</td></tr>';
+ renderMatchHistory();
  const seasons=[...db.seasons].sort((a,b)=>b.start.localeCompare(a.start));if(!selectedSeason||!seasons.some(s=>s.id===selectedSeason))selectedSeason=seasons.find(s=>today()>=s.start&&today()<=s.end)?.id||seasons[0]?.id||'';
  document.getElementById('prizeSeason').innerHTML=seasons.map(s=>`<option value="${s.id}" ${s.id===selectedSeason?'selected':''}>${esc(s.name)} (${s.start} a ${s.end})</option>`).join('')||'<option value="">Crie uma temporada</option>';
  const currentSeason=db.seasons.find(s=>today()>=s.start&&today()<=s.end);const homeContribs=currentSeason?db.contributions.filter(c=>c.seasonId===currentSeason.id):[];const homeTotal=homeContribs.reduce((a,c)=>a+Number(c.amount),0);document.getElementById('homePrize').textContent=money(homeTotal);document.getElementById('homeContrib').textContent=homeContribs.length+' contribuições';document.getElementById('homeWeek').textContent=currentSeason?`${currentSeason.name} · ${currentSeason.start.split('-').reverse().join('/')} a ${currentSeason.end.split('-').reverse().join('/')}`:'Nenhuma temporada vigente';const cs=db.contributions.filter(c=>c.seasonId===selectedSeason),total=cs.reduce((a,c)=>a+Number(c.amount),0);document.getElementById('prizeTotal').textContent=money(total);document.getElementById('prizeCount').textContent=cs.length+' contribuições';
