@@ -572,8 +572,8 @@ nav button.active{
 @media(max-width:760px){.profile-heading{align-items:stretch;flex-direction:column}.profile-controls{min-width:0;grid-template-columns:90px minmax(0,1fr)}.profile-hero{grid-template-columns:1fr}.profile-person{min-height:240px}.profile-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-lower{grid-template-columns:1fr}.profile-outcomes{grid-template-columns:100px 1fr}.profile-donut{width:96px;height:96px}}
 
 /* Refinamento visual do arquivo de planeswalker */
-.profile-heading{position:relative;isolation:isolate;min-height:132px;padding:24px 28px;background:url("assets/header-batalha-planeswalkers.webp") center 43%/cover no-repeat;border-bottom:1px solid rgba(244,179,75,.35)}
-.profile-heading:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(4,8,15,.94) 0%,rgba(5,10,18,.88) 48%,rgba(5,9,17,.84) 100%),linear-gradient(0deg,rgba(3,7,13,.62),rgba(3,7,13,.55));backdrop-filter:brightness(.48)}
+.profile-heading{position:relative;isolation:isolate;min-height:132px;padding:24px 28px;background:url("assets/banner-participantes.webp") center 48%/cover no-repeat;border-bottom:1px solid rgba(244,179,75,.35)}
+.profile-heading:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(4,8,15,.72) 0%,rgba(5,10,18,.58) 48%,rgba(5,9,17,.68) 100%),linear-gradient(0deg,rgba(3,7,13,.32),rgba(3,7,13,.22));backdrop-filter:brightness(.78)}
 .profile-heading h2,.profile-heading p,.profile-kicker,.profile-controls{position:relative;text-shadow:0 2px 5px #000}
 .profile-heading p{color:#f0e8da}
 .profile-hero{grid-template-columns:minmax(250px,.68fr) minmax(0,2fr);gap:18px;padding:20px 20px 18px}
@@ -620,6 +620,28 @@ nav button.active{
 @media(max-width:900px){.profile-hero{grid-template-columns:1fr}.profile-person{min-height:260px}.profile-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.profile-heading{padding:18px;align-items:stretch;flex-direction:column}.profile-controls{min-width:0;grid-template-columns:1fr 1fr}.profile-controls label{font-size:9px}.profile-lower{grid-template-columns:1fr;padding:0 12px 14px}.profile-hero{padding:12px}.profile-metrics{gap:7px}.profile-metric{min-height:88px;padding:9px 7px;gap:7px}.metric-icon{width:30px;height:30px;flex-basis:30px;font-size:16px}.profile-metric em{font-size:8px}.deck-art-image{height:120px}.duo-feature{gap:12px}.duo-portrait{width:68px;height:86px}.duo-cross{left:60px;top:34px}}
 
+
+/* Ajustes de hierarquia, gráfico e cards de deck */
+.players-collapsible{padding:0;overflow:hidden}
+.players-collapsible>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;margin:0;user-select:none}
+.players-collapsible>summary::-webkit-details-marker{display:none}
+.players-collapsible>summary:after{content:"＋";color:#f4bd62;font-size:18px}
+.players-collapsible[open]>summary:after{content:"−"}
+.collapse-hint{font:500 10px Inter,Arial,sans-serif;color:#aeb9c8;margin-left:auto}
+.players-collapsible .table-wrap{padding:0 16px 14px}
+.spark-subtitle{font-size:10px;color:#aeb9c8;margin:-7px 0 8px 28px;letter-spacing:.3px}
+.spark-chart{width:100%;min-height:170px}
+.spark-chart svg{display:block;width:100%;height:auto;overflow:visible}
+.trend-card .profile-card h3{margin-bottom:12px}
+.deck-art-image{height:148px}
+.deck-art-image:after{display:none}
+.deck-art-image img{object-fit:cover}
+.deck-rank{top:8px;left:8px}
+.deck-art-name{font-size:12px;min-height:32px;margin:10px 0 3px}
+.deck-art-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:10px;color:#aeb9c8;margin-bottom:7px}
+.deck-art-meta b{color:#f4c878;font-size:11px}
+@media(max-width:600px){.players-collapsible>summary{padding:14px}.spark-chart{min-height:130px}.deck-art-image{height:112px}.deck-art-name{font-size:10px}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -664,17 +686,17 @@ nav button.active{
  </section>
  <section id="players" class="section">
   <div class="page-head"><h1>Participantes</h1><p>Cadastre jogadores, fotos e acompanhe o desempenho individual.</p></div>
+  <div class="participant-profile" id="participantProfile">
+   <div class="profile-heading"><div><div class="profile-kicker">ARQUIVO DO PLANESWALKER</div><h2>Estatísticas individuais</h2><p>Selecione um participante para consultar seu histórico no campeonato.</p></div><div class="profile-controls"><label for="profilePlayer">Participante</label><select id="profilePlayer"><option value="">Selecione um participante</option></select><label for="profileSeason">Período</label><select id="profileSeason"><option value="all">Histórico completo</option></select></div></div>
+   <div id="profileContent"><div class="profile-empty">Escolha um participante para revelar suas estatísticas.</div></div>
+  </div>
   <div class="panel"><div class="panel-title">Cadastro de participantes</div><div class="panel-body">
    <form id="playerForm">
     <div class="form-grid"><input id="playerName" placeholder="Nome do participante" required><input id="playerNick" placeholder="Apelido (opcional)"><input id="playerPhoto" type="file" accept="image/*"></div>
     <div class="notice">A foto será ajustada automaticamente para 480 × 480 px.</div><button class="btn">+ Adicionar participante</button>
    </form>
   </div></div>
-  <div class="panel" style="margin-top:16px"><div class="panel-title">Jogadores cadastrados</div><div class="table-wrap"><table><thead><tr><th>Participante</th><th>Pontos</th><th>Vitórias</th><th>Empates</th><th>Presenças</th><th>Ações</th></tr></thead><tbody id="playersTable"></tbody></table></div></div>
-  <div class="participant-profile" id="participantProfile">
-   <div class="profile-heading"><div><div class="profile-kicker">ARQUIVO DO PLANESWALKER</div><h2>Estatísticas individuais</h2><p>Selecione um participante para consultar seu histórico no campeonato.</p></div><div class="profile-controls"><label for="profilePlayer">Participante</label><select id="profilePlayer"><option value="">Selecione um participante</option></select><label for="profileSeason">Período</label><select id="profileSeason"><option value="all">Histórico completo</option></select></div></div>
-   <div id="profileContent"><div class="profile-empty">Escolha um participante para revelar suas estatísticas.</div></div>
-  </div>
+  <details class="panel players-collapsible" style="margin-top:16px"><summary class="panel-title">Jogadores cadastrados <span class="collapse-hint">Clique para expandir ▾</span></summary><div class="table-wrap"><table><thead><tr><th>Participante</th><th>Pontos</th><th>Vitórias</th><th>Empates</th><th>Presenças</th><th>Ações</th></tr></thead><tbody id="playersTable"></tbody></table></div></details>
  </section>
  <section id="decks" class="section">
   <div class="page-head"><h1>Decks Precon</h1><p>Cadastre decks, combinações de cores e acompanhe frequência de uso.</p></div>
@@ -846,9 +868,9 @@ function renderParticipantProfile(){
  </div></div>
  <div class="profile-lower">
  <div class="profile-card outcomes-card"><h3><span>◉</span> Distribuição de resultados</h3><div class="profile-outcomes"><div class="profile-donut" style="--win:${winPct}%;--draw:${winPct+drawPct}%"><b>${fmt(rate)}%</b></div><div class="profile-legend"><div><span style="--dot:#e8a847">Vitórias</span><b>${wins}</b></div><div><span style="--dot:#75a9cf">Empates</span><b>${draws}</b></div><div><span style="--dot:#bd6671">Derrotas</span><b>${losses}</b></div></div></div></div>
- <div class="profile-card trend-card"><h3><span>⌁</span> Forma recente · últimos ${recent.length} registros</h3>${trend.length?`<div class="profile-trend">${trend.map((v,i)=>`<span style="height:${Math.max(4,v)}%" title="${fmt(v)}%"><i>${i+1}</i></span>`).join('')}</div>`:'<div class="profile-no-data">Ainda não há resultados neste período.</div>'}</div>
+ <div class="profile-card trend-card"><h3><span>⌁</span> Spark Evolution</h3><div class="spark-subtitle">Aproveitamento por data · últimos ${recent.length} registros</div>${trend.length?(()=>{const W=640,H=230,L=48,R=18,T=16,B=42,plotW=W-L-R,plotH=H-T-B;const pts=trend.map((v,i)=>({x:L+(trend.length===1?plotW/2:i*plotW/(trend.length-1)),y:T+(100-v)*plotH/100,v,date:recent[i].date}));const path=pts.map((q,i)=>(i?'L':'M')+q.x.toFixed(1)+','+q.y.toFixed(1)).join(' ');const grid=[0,25,50,75,100].map(v=>{const y=T+(100-v)*plotH/100;return `<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="rgba(197,211,228,.14)" stroke-dasharray="4 5"/><text x="${L-10}" y="${y+4}" text-anchor="end" fill="#aeb9c8" font-size="11">${v}%</text>`}).join('');const dots=pts.map((q,i)=>`<circle cx="${q.x}" cy="${q.y}" r="5" fill="#ffd17a" stroke="#151d2a" stroke-width="3"><title>${fmt(q.v)}% · ${q.date}</title></circle><text x="${q.x}" y="${H-14}" text-anchor="middle" fill="#aeb9c8" font-size="10">${q.date? q.date.slice(5).replace('-','/') : i+1}</text>`).join('');return `<div class="spark-chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de aproveitamento por data, de zero a cem por cento">${grid}<path d="${path}" fill="none" stroke="#e7aa4d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>${dots}</svg></div>`})():'<div class="profile-no-data">Ainda não há resultados neste período.</div>'}</div>
  <div class="profile-card profile-favorite"><h3><span>♛</span> Dupla mais frequente</h3>${favorite?`<div class="duo-feature"><div class="duo-portraits"><div class="duo-portrait main-portrait">${partnerPhoto(p)}</div><div class="duo-portrait">${partnerPhoto(favorite.player)}</div><span class="duo-cross">✦</span></div><div class="duo-info"><div class="duo-kicker">PARCERIA EM DESTAQUE</div><div class="favorite-name">${esc(favorite.player.nick||favorite.player.name)}</div><div class="favorite-stats">${favorite.games} partidas juntos · ${favorite.wins} vitórias · ${favorite.draws} empates · ${favorite.losses} derrotas<br>Aproveitamento da dupla: <b>${fmt((favorite.wins+favorite.draws*.5)/(favorite.wins+favorite.draws+favorite.losses||1)*100)}%</b></div></div></div>`:'<div class="profile-no-data">Nenhuma partida em dupla registrada neste período.</div>'}</div>
- <div class="profile-card decks-feature"><h3><span>▤</span> Os 3 decks mais utilizados</h3>${decks.length?`<div class="deck-art-grid">${decks.slice(0,3).map((x,i)=>`<div class="deck-art-card"><div class="deck-art-image">${x.deck.photo?`<img src="${x.deck.photo}" alt="${esc(x.deck.name)}">`:'<div class="deck-art-fallback">✧</div>'}<span class="deck-rank">0${i+1}</span><span class="deck-use">${x.uses} ${x.uses===1?'uso':'usos'}</span></div><div class="deck-art-name">${esc(x.deck.name)}</div><div class="deck-art-bar"><i style="width:${x.uses/maxDeck*100}%"></i></div></div>`).join('')}</div>`:'<div class="profile-no-data">Nenhum deck registrado neste período.</div>'}</div>
+ <div class="profile-card decks-feature"><h3><span>▤</span> Os 3 decks mais utilizados</h3>${decks.length?`<div class="deck-art-grid">${decks.slice(0,3).map((x,i)=>`<div class="deck-art-card"><div class="deck-art-image">${x.deck.photo?`<img src="${x.deck.photo}" alt="${esc(x.deck.name)}">`:'<div class="deck-art-fallback">✧</div>'}<span class="deck-rank">0${i+1}</span></div><div class="deck-art-name">${esc(x.deck.name)}</div><div class="deck-art-meta">${x.uses} ${x.uses===1?'utilização':'utilizações'} <b>${Math.round(x.uses/maxDeck*100)}%</b></div><div class="deck-art-bar"><i style="width:${x.uses/maxDeck*100}%"></i></div></div>`).join('')}</div>`:'<div class="profile-no-data">Nenhum deck registrado neste período.</div>'}</div>
  </div>`;
 }
 document.getElementById('profilePlayer').addEventListener('change',e=>{selectedProfilePlayer=e.target.value;renderParticipantProfile()});
