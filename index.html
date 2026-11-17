@@ -816,8 +816,8 @@ document.getElementById('deckForm').onsubmit=async e=>{e.preventDefault();try{co
 function editDeck(id){const d=db.decks.find(x=>x.id===id);openModal('Editar deck',`<div class="field"><label>Nome</label><input id="editDeckName" value="${esc(d.name)}"></div><div class="field"><label>Comandante</label><input id="editCommander" value="${esc(d.commander)}"></div><div class="field"><label>Nova imagem (opcional)</label><input id="editDeckPhoto" type="file" accept="image/*"></div><div class="field"><label>Cores (W/U/B/R/G)</label><input id="editColors" value="${(d.colors||[]).join(',')}" placeholder="Ex.: R,G"></div><div class="modal-actions"><button class="btn" onclick="saveDeck('${id}')">Salvar</button></div>`)}
 async function saveDeck(id){const d=db.decks.find(x=>x.id===id);d.name=document.getElementById('editDeckName').value.trim();d.commander=document.getElementById('editCommander').value.trim();d.colors=document.getElementById('editColors').value.toUpperCase().split(/[,\s/]+/).filter(x=>colorNames[x]);const f=document.getElementById('editDeckPhoto').files[0];if(f)d.photo=await imageToSquare(f);closeModal();save()}
 function deleteDeck(id){if(confirm('Excluir deck? Os lançamentos históricos serão mantidos.')){db.decks=db.decks.filter(d=>d.id!==id);save()}}
-function playerOptions(){return db.players.map(p=>`<option value="${p.id}">${esc(p.nick||p.name)}</option>`).join('')}
-function deckOptions(){return db.decks.map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join('')}
+function playerOptions(){return [...db.players].sort((a,b)=>(a.nick||a.name||'').localeCompare(b.nick||b.name||'','pt-BR',{sensitivity:'base'})).map(p=>`<option value="${p.id}">${esc(p.nick||p.name)}</option>`).join('')}
+function deckOptions(){return [...db.decks].sort((a,b)=>(a.name||'').localeCompare(b.name||'','pt-BR',{sensitivity:'base'})).map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join('')}
 let matchMode='individual';
 function addScoreRow(){
  const box=document.getElementById('matchSlots'),row=document.createElement('div');
