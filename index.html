@@ -740,6 +740,13 @@ nav button.active{
  #home .panel-title .btn{font-size:11px;padding:8px 9px}
  #home .shortcuts{grid-template-columns:1fr}
 }
+
+/* Visão geral: contadores após os atalhos de categorias */
+.home-dashboard{display:block;width:100%;min-width:0}
+.home-dashboard>.right-col{display:block;width:100%;min-width:0}
+.home-counts{margin-top:18px;width:100%;min-width:0}
+.home-counts .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:100%}
+@media(max-width:760px){.home-counts .stats{grid-template-columns:1fr;gap:8px}.home-counts .stat{min-height:66px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -762,11 +769,6 @@ nav button.active{
   </section>
   <div class="dashboard-grid home-dashboard">
    <div class="right-col">
-    <div class="stats">
-     <div class="panel stat"><div class="stat-icon">♟</div><div><b id="statPlayers">0</b><span>Participantes</span></div></div>
-     <div class="panel stat"><div class="stat-icon">▤</div><div><b id="statDecks">0</b><span>Decks cadastrados</span></div></div>
-     <div class="panel stat"><div class="stat-icon">⚔</div><div><b id="statMatches">0</b><span>Partidas registradas</span></div></div>
-    </div>
     <div class="panel"><div class="panel-title">♛ Classificação Geral <span><button class="btn secondary" id="rankingToggle" onclick="toggleFullRanking()">Ver classificação completa</button> <button class="btn secondary" onclick="showPage('players')">Ver participantes →</button></span></div>
      <div class="table-wrap"><table><thead><tr><th>#</th><th>Participante</th><th>Pontos</th><th>Vitórias</th><th>Empates</th><th>Derrotas</th><th>Aproveitamento</th></tr></thead><tbody id="leaderboard"></tbody></table></div>
     </div>
@@ -782,6 +784,11 @@ nav button.active{
    <div class="panel shortcut" onclick="showPage('matches')"><span>›</span><strong>Partidas</strong><p>Registre resultados e consulte o histórico.</p></div>
    <div class="panel shortcut" onclick="showPage('prizes')"><span>›</span><strong>Premiação</strong><p>Gerencie contribuições e prêmio semanal.</p></div>
   </div>
+  <div class="home-counts"><div class="stats">
+     <div class="panel stat"><div class="stat-icon">♟</div><div><b id="statPlayers">0</b><span>Participantes</span></div></div>
+     <div class="panel stat"><div class="stat-icon">▤</div><div><b id="statDecks">0</b><span>Decks cadastrados</span></div></div>
+     <div class="panel stat"><div class="stat-icon">⚔</div><div><b id="statMatches">0</b><span>Partidas registradas</span></div></div>
+    </div></div>
  </section>
  <section id="players" class="section">
   <div class="page-head"><h1>Participantes</h1></div>
@@ -823,8 +830,7 @@ nav button.active{
  </section>
  <section id="matches" class="section">
   <div class="page-head"><h1>Pontuação</h1></div>
-  <div class="panel points-guide"><div class="panel-title">Como a pontuação funciona</div><div class="panel-body"><div class="stats"><div class="stat"><div class="stat-icon">✦</div><div><b>+2</b><span>Vitória</span></div></div><div class="stat"><div class="stat-icon">≋</div><div><b>+1</b><span>Empate</span></div></div><div class="stat"><div class="stat-icon">☠</div><div><b>0</b><span>Derrota</span></div></div><div class="stat"><div class="stat-icon">♟</div><div><b>+1</b><span>Presença</span></div></div></div><p class="muted">Derrotas entram no cálculo do aproveitamento. O deck selecionado também contabiliza sua utilização.</p></div></div>
-  <div class="panel"><div class="panel-title">Lançamento de pontuação</div><div class="panel-body">
+  <div class="panel"><div class="panel-title">Lançamento de resultados</div><div class="panel-body">
    <form id="matchForm">
     <div class="form-grid"><input id="matchDate" type="date" required><input id="matchLabel" placeholder="Observação / rodada (opcional)"><select id="matchMode"><option value="individual">Formato individual</option><option value="duplas">Formato de duplas</option></select></div><p class="muted" id="matchModeHelp" style="font-size:12px;margin:8px 0 12px">No formato individual, registre cada participante separadamente.</p>
     <div id="matchSlots"></div>
