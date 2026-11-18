@@ -717,6 +717,7 @@ nav button.active{
 .weekly-champion-tie{text-align:center;color:#f0d3a8;font-size:12px;padding:8px}
 @media(max-width:600px){.weekly-champion-art{min-height:220px;padding:18px 7px;gap:4px}.weekly-champion-person strong{font-size:11px}.weekly-champion-person small{font-size:9px}.weekly-champion-center b{font-size:16px}}
 
+.settings-managed{display:none!important}.weekly-champion-head{padding:8px 14px 4px;background:transparent}.weekly-champion-period{font-size:11px;color:#d0c4b5}.spark-history-toggle{margin-top:10px}.spark-bars{width:100%;min-height:190px;overflow-x:auto}.spark-bars svg{display:block;width:100%;height:auto;min-width:420px}.score-field-legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:8px 0}.score-field-legend span{padding:7px 9px;border-radius:7px;background:rgba(255,255,255,.06);font-size:11px;text-align:center;color:#d8e0eb}.score-field-legend b{display:block;font-size:12px;color:#f4c878;margin-bottom:2px}.settings-option{width:100%;text-align:left;margin:5px 0}.decklist-details{margin:0 20px 20px;border:1px solid rgba(244,179,75,.22);border-radius:10px;background:rgba(4,10,18,.4)}.decklist-details>summary{cursor:pointer;padding:13px 16px;color:#f2c77e;font-weight:600}.decklist-details .decklist-panel{margin:0;border:0}@media(max-width:600px){.score-field-legend{gap:5px}.score-field-legend span{font-size:10px;padding:6px 4px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -733,21 +734,11 @@ nav button.active{
 </header>
 <main>
  <section id="home" class="section active">
-  <div class="page-head"><h1>Visão Geral</h1><p>Acompanhe a classificação, o uso dos decks e o prêmio do campeonato Precon.</p></div>
   <section class="weekly-champion" id="weeklyChampion" aria-live="polite">
-   <div class="weekly-champion-head">
-    <div class="weekly-champion-kicker">Campeonato Precon · Honra da semana</div>
-    <h2 class="weekly-champion-title">Dupla Campeã da Semana</h2>
-    <div class="weekly-champion-period" id="weeklyChampionPeriod">Apuração por temporada</div>
-   </div>
+   <div class="weekly-champion-head"><div class="weekly-champion-period" id="weeklyChampionPeriod">Apuração por temporada</div></div>
    <div id="weeklyChampionContent" class="weekly-champion-empty">Aguardando partidas da semana.</div>
   </section>
   <div class="dashboard-grid">
-   <div class="panel prize"><div class="panel-title">🏆 PRÊMIO DA TEMPORADA</div><div class="panel-body">
-    <div class="prize-art">🪙</div><div class="prize-label">TESOURO ACUMULADO</div><div class="prize-amount" id="homePrize">R$ 0,00</div>
-    <div class="prize-meta"><span id="homeContrib">0 contribuições</span><span id="homeWeek">Semana atual</span></div>
-    <button class="btn" onclick="showPage('prizes')">Gerenciar Premiação</button>
-   </div></div>
    <div class="right-col">
     <div class="stats">
      <div class="panel stat"><div class="stat-icon">♟</div><div><b id="statPlayers">0</b><span>Participantes</span></div></div>
@@ -759,6 +750,9 @@ nav button.active{
     </div>
    </div>
   </div>
+  <div class="panel prize" style="margin-top:20px"><div class="panel-title">🏆 TESOURO ACUMULADO</div><div class="panel-body">
+   <div class="prize-art">🪙</div><div class="prize-amount" id="homePrize">R$ 0,00</div><div class="prize-meta"><span id="homeContrib">0 contribuições</span><span id="homeWeek">Semana atual</span></div><button class="btn" onclick="showPage('prizes')">Gerenciar Premiação</button>
+  </div></div>
   <div class="panel" style="margin-top:20px"><div class="panel-title">♜ Destaques dos Decks <span class="muted" style="font:12px Inter">Mais e menos utilizados</span></div><div class="panel-body"><div id="deckHighlights" class="deck-highlight-grid"></div></div></div>
   <div class="shortcuts">
    <div class="panel shortcut" onclick="showPage('players')"><span>›</span><strong>Participantes</strong><p>Gerencie os jogadores do campeonato.</p></div>
@@ -768,26 +762,26 @@ nav button.active{
   </div>
  </section>
  <section id="players" class="section">
-  <div class="page-head"><h1>Participantes</h1><p>Cadastre jogadores, fotos e acompanhe o desempenho individual.</p></div>
+  <div class="page-head"><h1>Participantes</h1></div>
   <div class="participant-profile" id="participantProfile">
    <div class="profile-heading"><div><div class="profile-kicker">ARQUIVO DO PLANESWALKER</div><h2>Estatísticas individuais</h2><p>Selecione um participante para consultar seu histórico no campeonato.</p></div><div class="profile-controls"><label for="profilePlayer">Participante</label><select id="profilePlayer"><option value="">Selecione um participante</option></select><label for="profileSeason">Período</label><select id="profileSeason"><option value="all">Histórico completo</option></select></div></div>
    <div id="profileContent"><div class="profile-empty">Escolha um participante para revelar suas estatísticas.</div></div>
   </div>
-  <div class="panel"><div class="panel-title">Cadastro de participantes</div><div class="panel-body">
+  <div id="playerAdminPanel" class="panel settings-managed"><div class="panel-title">Cadastro de participantes</div><div class="panel-body">
    <form id="playerForm">
     <div class="form-grid"><input id="playerName" placeholder="Nome do participante" required><input id="playerNick" placeholder="Apelido (opcional)"><input id="playerPhoto" type="file" accept="image/*"></div>
     <div class="notice">A foto será ajustada automaticamente para 480 × 480 px.</div><button class="btn">+ Adicionar participante</button>
    </form>
   </div></div>
-  <details class="panel players-collapsible" style="margin-top:16px"><summary class="panel-title">Jogadores cadastrados <span class="collapse-hint">Clique para expandir ▾</span></summary><div class="table-wrap"><table><thead><tr><th>Participante</th><th>Pontos</th><th>Vitórias</th><th>Empates</th><th>Presenças</th><th>Ações</th></tr></thead><tbody id="playersTable"></tbody></table></div></details>
+  <details id="playersListPanel" class="panel players-collapsible settings-managed" style="margin-top:16px"><summary class="panel-title">Jogadores cadastrados <span class="collapse-hint">Clique para expandir ▾</span></summary><div class="table-wrap"><table><thead><tr><th>Participante</th><th>Pontos</th><th>Vitórias</th><th>Empates</th><th>Presenças</th><th>Ações</th></tr></thead><tbody id="playersTable"></tbody></table></div></details>
  </section>
  <section id="decks" class="section">
-  <div class="page-head"><h1>Decks Precon</h1><p>Cadastre decks, combinações de cores e acompanhe frequência de uso.</p><button class="btn secondary" type="button" onclick="importAllDecklists()">↻ Buscar decklists dos decks cadastrados</button></div>
+  <div class="page-head"><h1>Decks Precon</h1></div>
   <div class="deck-profile" id="deckProfile">
    <div class="deck-profile-heading"><div><div class="profile-kicker">ARQUIVO DO DECK</div><h2>Estatísticas dos decks</h2><p>Selecione um deck para consultar seu desempenho no campeonato.</p></div><div class="deck-profile-controls"><label for="profileDeck">Deck</label><select id="profileDeck"><option value="">Selecione um deck</option></select><label for="profileDeckSeason">Período</label><select id="profileDeckSeason"><option value="all">Histórico completo</option></select></div></div>
    <div id="deckProfileContent"><div class="profile-empty">Cadastre ou selecione um deck para revelar suas estatísticas.</div></div>
   </div>
-  <div class="panel"><div class="panel-title">Adicionar deck</div><div class="panel-body">
+  <div id="deckAdminPanel" class="panel settings-managed"><div class="panel-title">Adicionar deck</div><div class="panel-body">
    <form id="deckForm">
     <div class="catalog-picker">
       <div class="catalog-heading"><strong>Catálogo de precons</strong><span class="muted">Selecione para preencher o cadastro</span></div>
@@ -806,8 +800,8 @@ nav button.active{
   <div id="decksCards" class="cards" style="margin-top:16px"></div>
  </section>
  <section id="matches" class="section">
-  <div class="page-head"><h1>Pontuação</h1><p>Registre a participação e o desempenho de cada jogador por data.</p></div>
-  <div class="notice">Pontuação automática: cada vitória vale 2 pontos, cada empate vale 1 ponto, cada derrota vale 0 pontos e a presença vale 1 ponto. Derrotas entram no cálculo do aproveitamento. O deck selecionado também contabiliza sua utilização.</div>
+  <div class="page-head"><h1>Pontuação</h1></div>
+  <div class="panel points-guide"><div class="panel-title">Como a pontuação funciona</div><div class="panel-body"><div class="stats"><div class="stat"><div class="stat-icon">✦</div><div><b>+2</b><span>Vitória</span></div></div><div class="stat"><div class="stat-icon">≋</div><div><b>+1</b><span>Empate</span></div></div><div class="stat"><div class="stat-icon">☠</div><div><b>0</b><span>Derrota</span></div></div><div class="stat"><div class="stat-icon">♟</div><div><b>+1</b><span>Presença</span></div></div></div><p class="muted">Derrotas entram no cálculo do aproveitamento. O deck selecionado também contabiliza sua utilização.</p></div></div>
   <div class="panel"><div class="panel-title">Lançamento de pontuação</div><div class="panel-body">
    <form id="matchForm">
     <div class="form-grid"><input id="matchDate" type="date" required><input id="matchLabel" placeholder="Observação / rodada (opcional)"><select id="matchMode"><option value="individual">Formato individual</option><option value="duplas">Formato de duplas</option></select></div><p class="muted" id="matchModeHelp" style="font-size:12px;margin:8px 0 12px">No formato individual, registre cada participante separadamente.</p>
@@ -818,15 +812,15 @@ nav button.active{
   <div class="panel history-panel" style="margin-top:16px"><div class="panel-title history-title"><span>Histórico de pontuação</span><label for="historyDate">Data do registro <input id="historyDate" type="date"></label></div><div class="history-date-caption" id="historyDateCaption"></div><div class="table-wrap"><table><thead><tr><th>Data</th><th>Participante</th><th>Deck</th><th>Vitórias</th><th>Empates</th><th>Derrotas</th><th>Presença</th><th>Pontos</th><th>Ações</th></tr></thead><tbody id="matchesTable"></tbody></table></div></div>
  </section>
  <section id="prizes" class="section">
-  <div class="page-head"><h1>O Tesouro</h1><p>Crie temporadas com períodos próprios e acompanhe o prêmio acumulado.</p></div>
-  <div class="panel"><div class="panel-title">Criar temporada</div><div class="panel-body">
+  <div class="page-head"><h1>O Tesouro</h1></div>
+  <div id="seasonAdminPanel" class="panel settings-managed"><div class="panel-title">Criar temporada</div><div class="panel-body">
    <form id="seasonForm"><div class="form-grid"><input id="seasonName" placeholder="Nome da temporada (ex.: Temporada 2026)" required><input id="seasonStart" type="date" required><input id="seasonEnd" type="date" required></div><button class="btn">+ Criar temporada</button></form>
   </div></div>
   <div class="panel prize" style="margin-top:16px"><div class="panel-title">🏆 TESOURO DA TEMPORADA</div><div class="panel-body">
    <div class="prize-art">🪙</div><div class="prize-label">MONTANTE ACUMULADO</div><div class="prize-amount" id="prizeTotal">R$ 0,00</div>
    <div class="prize-meta"><span id="prizeCount">0 contribuições</span><span><label for="prizeSeason">Temporada:</label> <select id="prizeSeason" style="width:auto;padding:5px"></select></span></div>
   </div></div>
-  <div class="panel" style="margin-top:16px"><div class="panel-title">Adicionar contribuição</div><div class="panel-body">
+  <div id="contributionAdminPanel" class="panel settings-managed" style="margin-top:16px"><div class="panel-title">Adicionar contribuição</div><div class="panel-body">
    <form id="prizeForm" class="form-row"><input id="contributor" placeholder="Quem contribuiu?" required><input id="prizeAmount" type="number" min="0.01" step="0.01" placeholder="Valor em R$" required><input id="contributionDate" type="date" required><button class="btn">+ Adicionar ao tesouro</button></form>
   </div></div>
   <div class="panel" style="margin-top:16px"><div class="panel-title">Histórico de contribuições</div><div class="table-wrap"><table><thead><tr><th>Data</th><th>Contribuinte</th><th>Valor</th><th>Ações</th></tr></thead><tbody id="prizesTable"></tbody></table></div></div>
@@ -973,7 +967,7 @@ function renderParticipantProfile(){
  <div class="profile-card outcomes-card"><h3><span>◉</span> Distribuição de resultados</h3><div class="outcomes-summary"><div class="profile-donut" style="--win:${winPct}%;--draw:${winPct+drawPct}%"><b>${fmt(rate)}%</b></div><div><small>APROVEITAMENTO GERAL</small><strong>${fmt(rate)}%</strong><span>vitórias + metade dos empates</span></div></div><div class="result-bars">${[{label:'Vitórias',value:wins,color:'#e8a847'},{label:'Empates',value:draws,color:'#75a9cf'},{label:'Derrotas',value:losses,color:'#bd6671'}].map(x=>`<div class="result-bar-row"><b>${x.label}</b><div class="result-bar-track"><i style="width:${Math.max(0,x.value/Math.max(1,wins,draws,losses)*100)}%;background:${x.color}"></i></div><strong>${x.value}</strong></div>`).join('')}</div></div>
  <div class="profile-card trend-card"><h3><span>⌁</span> Spark Evolution</h3><div class="spark-subtitle">Aproveitamento por data · últimos ${recent.length} registros</div>${trend.length?(()=>{const W=640,H=230,L=48,R=18,T=16,B=42,plotW=W-L-R,plotH=H-T-B;const pts=trend.map((v,i)=>({x:L+(trend.length===1?plotW/2:i*plotW/(trend.length-1)),y:T+(100-v)*plotH/100,v,date:recent[i].date}));const path=pts.map((q,i)=>(i?'L':'M')+q.x.toFixed(1)+','+q.y.toFixed(1)).join(' ');const grid=[0,25,50,75,100].map(v=>{const y=T+(100-v)*plotH/100;return `<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="rgba(197,211,228,.14)" stroke-dasharray="4 5"/><text x="${L-10}" y="${y+4}" text-anchor="end" fill="#aeb9c8" font-size="11">${v}%</text>`}).join('');const dots=pts.map((q,i)=>`<circle cx="${q.x}" cy="${q.y}" r="5" fill="#ffd17a" stroke="#151d2a" stroke-width="3"><title>${fmt(q.v)}% · ${q.date}</title></circle><text x="${q.x}" y="${H-14}" text-anchor="middle" fill="#aeb9c8" font-size="10">${q.date? q.date.slice(5).replace('-','/') : i+1}</text>`).join('');return `<div class="spark-chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de aproveitamento por data, de zero a cem por cento">${grid}<path d="${path}" fill="none" stroke="#e7aa4d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>${dots}</svg></div>`})():'<div class="profile-no-data">Ainda não há resultados neste período.</div>'}</div>
  <div class="profile-card profile-favorite"><h3><span>♛</span> Dupla mais frequente</h3>${favorite?`<div class="duo-feature"><div class="duo-portraits"><div class="duo-portrait main-portrait">${partnerPhoto(p)}</div><div class="duo-portrait">${partnerPhoto(favorite.player)}</div><span class="duo-cross">✦</span></div><div class="duo-info"><div class="duo-kicker">PARCERIA EM DESTAQUE</div><div class="favorite-name">${esc(favorite.player.nick||favorite.player.name)}</div><div class="favorite-stats">${favorite.games} partidas juntos · ${favorite.wins} vitórias · ${favorite.draws} empates · ${favorite.losses} derrotas<br>Aproveitamento da dupla: <b>${fmt((favorite.wins+favorite.draws*.5)/(favorite.wins+favorite.draws+favorite.losses||1)*100)}%</b></div></div></div>`:'<div class="profile-no-data">Nenhuma partida em dupla registrada neste período.</div>'}</div>
- <div class="profile-card decks-feature"><h3><span>▤</span> Os 3 decks mais utilizados</h3>${decks.length?`<div class="deck-art-grid">${decks.slice(0,3).map((x,i)=>`<div class="deck-art-card"><div class="deck-art-image">${x.deck.photo?`<img src="${x.deck.photo}" alt="${esc(x.deck.name)}">`:'<div class="deck-art-fallback">✧</div>'}<span class="deck-rank">0${i+1}</span></div><div class="deck-art-name">${esc(x.deck.name)}</div><div class="deck-art-meta">${x.uses} ${x.uses===1?'utilização':'utilizações'} <b>${Math.round(x.uses/maxDeck*100)}%</b></div><div class="deck-art-bar"><i style="width:${x.uses/maxDeck*100}%"></i></div></div>`).join('')}</div>`:'<div class="profile-no-data">Nenhum deck registrado neste período.</div>'}</div>
+ <div class="profile-card decks-feature"><h3><span>▤</span> Os 3 decks mais utilizados</h3>${decks.length?`<div class="deck-art-grid">${decks.slice(0,3).map((x,i)=>`<div class="deck-art-card"><div class="deck-art-image">${x.deck.photo?`<img src="${x.deck.photo}" alt="${esc(x.deck.name)}">`:'<div class="deck-art-fallback">✧</div>'}</div><div class="deck-art-name">${esc(x.deck.name)}</div><div class="deck-art-meta">${x.uses} ${x.uses===1?'utilização':'utilizações'} <b>${Math.round(x.uses/maxDeck*100)}%</b></div><div class="deck-art-bar"><i style="width:${x.uses/maxDeck*100}%"></i></div></div>`).join('')}</div>`:'<div class="profile-no-data">Nenhum deck registrado neste período.</div>'}</div>
  </div>`;
 }
 const MTGJSON_BASE='https://mtgjson.com/api/v5/';
@@ -1019,7 +1013,7 @@ function renderDecklistSection(deck){
  const groups=[['Comandante',data.commander||[]],['Deck principal',data.mainBoard||[]],['Sideboard',data.sideBoard||[]],['Tokens',data.tokens||[]]].filter(g=>g[1].length);
  const total=groups.reduce((n,g)=>n+g[1].reduce((a,c)=>a+Number(c.count||1),0),0);
  const contents=groups.map(([label,cards])=>`<div class="decklist-group"><h4>${esc(label)} · ${cards.reduce((n,c)=>n+Number(c.count||1),0)}</h4>${cards.map(c=>`<div class="decklist-row" data-card-name="${esc(normalizeDeckName(c.name))}"><span>${esc(c.name)}</span><b>${Number(c.count||1)}×</b></div>`).join('')}</div>`).join('');
- return `<div class="decklist-panel"><div class="decklist-head"><h3>Decklist completa · ${total} cartas</h3><input class="decklist-search" type="search" placeholder="Buscar carta..." oninput="filterDecklistRows(this.value)"></div><div class="decklist-groups">${contents}</div><div class="decklist-note">Fonte: MTGJSON · ${esc(data.name||deck.name)} · ${esc(data.code||'')} · Importada em ${deck.decklistImportedAt?new Date(deck.decklistImportedAt).toLocaleDateString('pt-BR'):'data não informada'}</div><div class="decklist-actions"><button class="btn secondary" onclick="editDeck('${deck.id}')">Gerenciar decklist</button></div></div>`;
+ return `<details class="decklist-details"><summary>Decklist completa · ${total} cartas — clique para expandir</summary><div class="decklist-panel"><div class="decklist-head"><h3>Decklist completa · ${total} cartas</h3><input class="decklist-search" type="search" placeholder="Buscar carta..." oninput="filterDecklistRows(this.value)"></div><div class="decklist-groups">${contents}</div><div class="decklist-note">Fonte: MTGJSON · ${esc(data.name||deck.name)} · ${esc(data.code||'')} · Importada em ${deck.decklistImportedAt?new Date(deck.decklistImportedAt).toLocaleDateString('pt-BR'):'data não informada'}</div><div class="decklist-actions"><button class="btn secondary" onclick="editDeck('${deck.id}')">Gerenciar decklist</button></div></div></details>`;
 }
 async function importAllDecklists(){if(!db.decks.length){alert('Não há decks cadastrados.');return}if(!confirm('Buscar automaticamente as decklists dos decks cadastrados no MTGJSON? Apenas correspondências exatas e únicas serão importadas.'))return;let ok=0,miss=0;try{const index=await getMtgjsonDeckIndex();for(const deck of db.decks){if(deck.decklistData)continue;const key=normalizeDeckName(deck.name);const matches=index.filter(x=>normalizeDeckName(x.name)===key);if(matches.length!==1){miss++;continue}try{const r=await fetch(MTGJSON_BASE+'decks/'+encodeURIComponent(matches[0].fileName)+'.json');if(!r.ok){miss++;continue}const data=normalizeMtgjsonDeck(await r.json());if(!data.commander.length&&!data.mainBoard.length){miss++;continue}deck.decklistData=data;deck.decklistSource='MTGJSON';deck.decklistFile=matches[0].fileName;deck.decklistImportedAt=new Date().toISOString();ok++}catch(e){miss++}}await save();renderDeckProfile();alert(`Importação concluída.\nDecklists importadas: ${ok}\nSem correspondência segura: ${miss}`)}catch(e){alert('Não foi possível acessar o MTGJSON: '+e.message)}}
 function filterDecklistRows(value){const q=normalizeDeckName(value);document.querySelectorAll('.decklist-row').forEach(row=>{row.style.display=!q||row.dataset.cardName.includes(q)?'flex':'none'});document.querySelectorAll('.decklist-group').forEach(group=>{group.style.display=[...group.querySelectorAll('.decklist-row')].some(row=>row.style.display!=='none')?'block':'none'});}
@@ -1057,16 +1051,20 @@ function renderDeckProfile(){
  ${metric('♟','Jogadores',players.length,'participantes que utilizaram')}
  </div></div><div class="deck-profile-lower">
  <div class="profile-card outcomes-card"><h3><span>◉</span> Distribuição de resultados</h3><div class="outcomes-summary"><div class="profile-donut" style="--win:${winPct}%;--draw:${winPct+drawPct}%"><b>${fmt(rate)}%</b></div><div><small>APROVEITAMENTO GERAL</small><strong>${fmt(rate)}%</strong><span>vitórias + metade dos empates</span></div></div><div class="result-bars">${[{label:'Vitórias',value:wins,color:'#e8a847'},{label:'Empates',value:draws,color:'#75a9cf'},{label:'Derrotas',value:losses,color:'#bd6671'}].map(x=>`<div class="result-bar-row"><b>${x.label}</b><div class="result-bar-track"><i style="width:${Math.max(0,x.value/Math.max(1,wins,draws,losses)*100)}%;background:${x.color}"></i></div><strong>${x.value}</strong></div>`).join('')}</div></div>
- <div class="profile-card trend-card"><h3><span>⌁</span> Spark Evolution</h3><div class="spark-subtitle">Aproveitamento por data · últimos ${recent.length} registros</div>${trend.length?(()=>{const W=640,H=230,L=48,R=18,T=16,B=42,plotW=W-L-R,plotH=H-T-B,pts=trend.map((v,i)=>({x:L+(trend.length===1?plotW/2:i*plotW/(trend.length-1)),y:T+(100-v)*plotH/100,v,date:recent[i].date})),path=pts.map((q,i)=>(i?'L':'M')+q.x.toFixed(1)+','+q.y.toFixed(1)).join(' '),grid=[0,25,50,75,100].map(v=>{const y=T+(100-v)*plotH/100;return `<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="rgba(197,211,228,.14)" stroke-dasharray="4 5"/><text x="${L-10}" y="${y+4}" text-anchor="end" fill="#aeb9c8" font-size="11">${v}%</text>`}).join(''),dots=pts.map((q,i)=>`<circle cx="${q.x}" cy="${q.y}" r="5" fill="#ffd17a" stroke="#151d2a" stroke-width="3"><title>${fmt(q.v)}% · ${q.date}</title></circle><text x="${q.x}" y="${H-14}" text-anchor="middle" fill="#aeb9c8" font-size="10">${q.date?q.date.slice(5).replace('-','/') : i+1}</text>`).join('');return `<div class="spark-chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de aproveitamento do deck por data">${grid}<path d="${path}" fill="none" stroke="#e7aa4d" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>${dots}</svg></div>`})():'<div class="profile-no-data">Ainda não há resultados neste período.</div>'}</div>
+ <div class="profile-card trend-card"><h3><span>⌁</span> Spark Evolution</h3><div class="spark-subtitle">Aproveitamento por registro · até 10 datas mais recentes</div><div id="deckSparkChart" class="spark-bars"></div><button class="btn secondary spark-history-toggle" type="button" onclick="toggleDeckSparkHistory()">Ver histórico completo</button></div>
  <div class="profile-card"><h3><span>♟</span> Jogadores que mais utilizaram</h3>${players.length?`<div class="deck-profile-players">${players.slice(0,6).map(x=>`<div class="deck-profile-player"><span>${esc(x.player.nick||x.player.name)}<small style="display:block;color:#9da9b8;margin-top:3px">${x.wins} vitórias · ${x.draws} empates · ${x.losses} derrotas</small></span><b>${x.uses} ${x.uses===1?'uso':'usos'}</b></div>`).join('')}</div>`:'<div class="profile-no-data">Nenhum jogador utilizou este deck no período.</div>'}</div>
  <div class="profile-card"><h3><span>▤</span> Informações do deck</h3><div class="favorite-stats">Comandante: <b>${esc(d.commander||'Não informado')}</b><br>Identidade de cores: <b>${esc(colors)}</b><br>Utilizações registradas: <b>${uses}</b><br>Partidas com resultado: <b>${played}</b></div>${url?`<a class="deck-profile-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">↗ Abrir decklist completa</a>`:'<div class="profile-no-data">Adicione um link de decklist na edição do deck para disponibilizá-lo aqui.</div>'}</div>
  </div>${renderDecklistSection(d)}`;
+ window.currentDeckSparkRows=rows;renderDeckSparkChart(rows);
 }
+let deckSparkShowAll=false;
+function renderDeckSparkChart(rows){const host=document.getElementById('deckSparkChart');if(!host)return;const ordered=[...rows].sort((a,b)=>a.date.localeCompare(b.date));const byDate={};ordered.forEach(m=>(byDate[m.date]||(byDate[m.date]=[])).push(m));const dates=Object.keys(byDate).sort();const visible=deckSparkShowAll?dates:dates.slice(-10);if(!visible.length){host.innerHTML='<div class="profile-no-data">Ainda não há resultados neste período.</div>';return}const maxPerDate=Math.max(1,...visible.map(date=>byDate[date].length)),slotW=Math.max(62,maxPerDate*13+18),W=Math.max(480,visible.length*slotW+70),H=220,L=42,R=12,T=14,B=42,ph=H-T-B,barW=Math.max(5,Math.min(18,(slotW-12)/maxPerDate-3));let bars='',labels='';visible.forEach((date,i)=>{const entries=byDate[date],center=L+(i+.5)*(W-L-R)/visible.length;entries.forEach((m,j)=>{const n=Number(m.wins||0)+Number(m.draws||0)+Number(m.losses||0),rate=n?(Number(m.wins||0)+Number(m.draws||0)*.5)/n*100:0,x=center+(j-(entries.length-1)/2)*(barW+3)-barW/2,y=T+(100-rate)*ph/100;bars+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW}" height="${Math.max(1,T+ph-y).toFixed(1)}" rx="3" fill="#e7aa4d"><title>${date} · Registro ${j+1} · ${rate.toFixed(1)}%</title></rect>`});labels+=`<text x="${center}" y="${H-14}" text-anchor="middle" fill="#aeb9c8" font-size="10">${date.slice(5).replace('-','/')}</text>`});const grid=[0,25,50,75,100].map(v=>{const y=T+(100-v)*ph/100;return `<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="rgba(197,211,228,.14)" stroke-dasharray="4 5"/><text x="${L-8}" y="${y+4}" text-anchor="end" fill="#aeb9c8" font-size="10">${v}%</text>`}).join('');host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Aproveitamento por registro do deck">${grid}${bars}${labels}</svg>`;const btn=document.querySelector('.spark-history-toggle');if(btn)btn.textContent=deckSparkShowAll?'Mostrar últimas 10 datas':'Ver histórico completo'}
+function toggleDeckSparkHistory(){deckSparkShowAll=!deckSparkShowAll;renderDeckSparkChart(window.currentDeckSparkRows||[])}
 document.getElementById('historyDate').addEventListener('change',e=>{selectedHistoryDate=e.target.value;renderMatchHistory()});
 document.getElementById('profilePlayer').addEventListener('change',e=>{selectedProfilePlayer=e.target.value;renderParticipantProfile()});
 document.getElementById('profileSeason').addEventListener('change',e=>{selectedProfileSeason=e.target.value;renderParticipantProfile()});
-document.getElementById('profileDeck').addEventListener('change',e=>{selectedProfileDeck=e.target.value;renderDeckProfile()});
-document.getElementById('profileDeckSeason').addEventListener('change',e=>{selectedProfileDeckSeason=e.target.value;renderDeckProfile()});
+document.getElementById('profileDeck').addEventListener('change',e=>{selectedProfileDeck=e.target.value;deckSparkShowAll=false;renderDeckProfile()});
+document.getElementById('profileDeckSeason').addEventListener('change',e=>{selectedProfileDeckSeason=e.target.value;deckSparkShowAll=false;renderDeckProfile()});
 
 function weeklyChampionContext(){
  const now=new Date();
@@ -1119,7 +1117,7 @@ function renderWeeklyChampion(){
    ${deckB?.photo?`<img class="weekly-champion-bg weekly-champion-bg-right" src="${esc(deckB.photo)}" alt="">`:''}
    <div class="weekly-champion-shade"></div>
    ${person(players[0],deckA)}
-   <div class="weekly-champion-center"><b>Dupla Campeã</b><span>${pair.points} pontos</span></div>
+   
    ${person(players[1],deckB)}
   </article>`;
  }).join(ctx.champions.length>1?'<div class="weekly-champion-tie">Empate na liderança semanal</div>':'');
@@ -1248,9 +1246,9 @@ function addScoreRow(){
  const players=playerOptions(),decks=deckOptions();
  if(matchMode==='duplas'){
   row.classList.add('duo-score-row');
-  row.innerHTML=`<div class="duo-members"><div><label class="muted">Participante 1</label><select class="score-player" required><option value="">Participante 1</option>${players}</select><select class="score-deck"><option value="">Deck utilizado (opcional)</option>${decks}</select></div><div><label class="muted">Participante 2</label><select class="score-player" required><option value="">Participante 2</option>${players}</select><select class="score-deck"><option value="">Deck utilizado (opcional)</option>${decks}</select></div></div><div class="duo-result"><input class="score-wins" type="number" min="0" value="0" title="Vitórias" placeholder="Vitórias"><input class="score-draws" type="number" min="0" value="0" title="Empates" placeholder="Empates"><input class="score-losses" type="number" min="0" value="0" title="Derrotas" placeholder="Derrotas"><label><input class="score-present" type="checkbox" checked> Presença</label></div><button type="button" class="btn danger" onclick="this.parentElement.remove()">Remover dupla</button>`;
+  row.innerHTML=`<div class="duo-members"><div><label class="muted">Participante 1</label><select class="score-player" required><option value="">Participante 1</option>${players}</select><select class="score-deck"><option value="">Deck utilizado (opcional)</option>${decks}</select></div><div><label class="muted">Participante 2</label><select class="score-player" required><option value="">Participante 2</option>${players}</select><select class="score-deck"><option value="">Deck utilizado (opcional)</option>${decks}</select></div></div><div class="score-field-legend"><span><b>Vitória</b>2 pontos</span><span><b>Derrota</b>0 pontos</span><span><b>Empate</b>1 ponto</span></div><div class="duo-result"><input class="score-wins" type="number" min="0" value="0" title="Vitórias" placeholder="Vitórias"><input class="score-losses" type="number" min="0" value="0" title="Derrotas" placeholder="Derrotas"><input class="score-draws" type="number" min="0" value="0" title="Empates" placeholder="Empates"><label><input class="score-present" type="checkbox" checked> Presença</label></div><button type="button" class="btn danger" onclick="this.parentElement.remove()">Remover dupla</button>`;
  }else{
-  row.innerHTML=`<select class="score-player" required><option value="">Participante</option>${players}</select><select class="score-deck"><option value="">Deck utilizado (opcional)</option>${decks}</select><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px"><input class="score-wins" type="number" min="0" value="0" title="Vitórias"><input class="score-draws" type="number" min="0" value="0" title="Empates"><input class="score-losses" type="number" min="0" value="0" title="Derrotas"><label style="display:flex;align-items:center;gap:4px;font-size:11px"><input class="score-present" type="checkbox" checked style="min-width:auto"> Presença</label></div><button type="button" class="btn danger" onclick="this.parentElement.remove()">Remover</button>`;
+  row.innerHTML=`<select class="score-player" required><option value="">Participante</option>${players}</select><select class="score-deck"><option value="">Deck utilizado (opcional)</option>${decks}</select><div class="score-field-legend"><span><b>Vitória</b>2 pontos</span><span><b>Derrota</b>0 pontos</span><span><b>Empate</b>1 ponto</span></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px"><input class="score-wins" type="number" min="0" value="0" title="Vitórias" placeholder="Vitórias"><input class="score-losses" type="number" min="0" value="0" title="Derrotas" placeholder="Derrotas"><input class="score-draws" type="number" min="0" value="0" title="Empates" placeholder="Empates"><label style="display:flex;align-items:center;gap:4px;font-size:11px"><input class="score-present" type="checkbox" checked style="min-width:auto"> Presença</label></div><button type="button" class="btn danger" onclick="this.parentElement.remove()">Remover</button>`;
  }
  box.appendChild(row);
 }
@@ -1293,8 +1291,8 @@ function editScore(id){
    <div style="margin:12px 0">${members}</div>
    <div class="form-grid">
     <label>Vitórias<input name="wins" type="number" min="0" step="1" value="${Number(first.wins||0)}" required></label>
-    <label>Empates<input name="draws" type="number" min="0" step="1" value="${Number(first.draws||0)}" required></label>
     <label>Derrotas<input name="losses" type="number" min="0" step="1" value="${Number(first.losses||0)}" required></label>
+    <label>Empates<input name="draws" type="number" min="0" step="1" value="${Number(first.draws||0)}" required></label>
    </div>
    <label style="display:flex;align-items:center;gap:8px;margin:12px 0"><input name="present" type="checkbox" ${first.present?'checked':''}> Presença</label>
    <label>Observação / rodada<input name="label" value="${esc(first.label||'')}" placeholder="Opcional"></label>
@@ -1324,7 +1322,12 @@ function openModal(title,content){document.getElementById('modalTitle').textCont
 function closeModal(){document.getElementById('modal').classList.remove('open')}
 function exportData(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));a.download='campeonato-precon-backup.json';a.click();URL.revokeObjectURL(a.href)}
 function importData(){const i=document.createElement('input');i.type='file';i.accept='application/json';i.onchange=()=>{const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.players||!x.decks||!x.matches||!x.contributions||!x.seasons)throw Error();db=x;save();alert('Backup importado.')}catch(e){alert('Arquivo inválido ou incompatível.')}};r.readAsText(f)};i.click()}
-const settings=document.createElement('button');settings.textContent='⚙';settings.title='Backup e configurações';settings.style.cssText='position:fixed;right:18px;bottom:18px;border:1px solid #d79b51;background:#172333;color:white;border-radius:50%;width:48px;height:48px;font-size:22px;cursor:pointer;z-index:15';settings.onclick=()=>openModal('Dados do campeonato',`<p class="muted">Faça backups regulares e configure a sincronização online.</p><div class="modal-actions"><button class="btn secondary" onclick="exportData()">Exportar backup</button><button class="btn secondary" onclick="importData()">Importar backup</button><button class="btn" onclick="openCloudSettings()">Conectar servidor / login</button></div><p class="muted" style="font-size:11px;margin-top:16px">O servidor mantém uma cópia central. Sem login, o site permanece em modo de consulta pública.</p>`);document.body.appendChild(settings);
+const settingsPanelOrigins={};
+function openSettingsPanel(id,title){const node=document.getElementById(id);if(!node)return;const host=document.getElementById('modalContent');if(!settingsPanelOrigins[id]){const marker=document.createComment('settings-origin-'+id);node.parentNode.insertBefore(marker,node);settingsPanelOrigins[id]=marker;}openModal(title,'');host.appendChild(node);node.style.display='block';node.classList.remove('settings-managed');}
+function restoreSettingsPanels(){Object.entries(settingsPanelOrigins).forEach(([id,marker])=>{const node=document.getElementById(id);if(node&&marker.parentNode){marker.parentNode.insertBefore(node,marker.nextSibling);node.classList.add('settings-managed');node.style.display='';}})}
+const oldCloseModal=closeModal;
+closeModal=function(){restoreSettingsPanels();oldCloseModal()};
+const settings=document.createElement('button');settings.textContent='⚙';settings.title='Configurações e gerenciamento';settings.style.cssText='position:fixed;right:18px;bottom:18px;border:1px solid #d79b51;background:#172333;color:white;border-radius:50%;width:48px;height:48px;font-size:22px;cursor:pointer;z-index:15';settings.onclick=()=>openModal('Configurações do campeonato',`<p class="muted">Gerencie cadastros, decklists e premiação.</p><button class="btn secondary settings-option" onclick="openSettingsPanel('playerAdminPanel','Cadastro de participantes')">Participantes · Cadastrar participante</button><button class="btn secondary settings-option" onclick="openSettingsPanel('playersListPanel','Jogadores cadastrados')">Participantes · Jogadores cadastrados</button><button class="btn secondary settings-option" onclick="openSettingsPanel('deckAdminPanel','Adicionar deck')">Decks · Adicionar deck</button><button class="btn secondary settings-option" onclick="importAllDecklists()">Decks · Buscar decklists</button><button class="btn secondary settings-option" onclick="openSettingsPanel('seasonAdminPanel','Criar temporada')">O Tesouro · Criar temporada</button><button class="btn secondary settings-option" onclick="openSettingsPanel('contributionAdminPanel','Adicionar contribuição')">O Tesouro · Adicionar contribuição</button><hr style="border-color:#ffffff22;margin:16px 0"><div class="modal-actions"><button class="btn secondary" onclick="exportData()">Exportar backup</button><button class="btn secondary" onclick="importData()">Importar backup</button><button class="btn" onclick="openCloudSettings()">Conectar servidor / login</button></div>`);document.body.appendChild(settings);
 render();if(!document.querySelector('.score-row'))addScoreRow();initSupabase();
 </script>
 </body>
