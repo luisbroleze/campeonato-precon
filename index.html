@@ -718,6 +718,28 @@ nav button.active{
 @media(max-width:600px){.weekly-champion-art{min-height:220px;padding:18px 7px;gap:4px}.weekly-champion-person strong{font-size:11px}.weekly-champion-person small{font-size:9px}.weekly-champion-center b{font-size:16px}}
 
 .settings-managed{display:none!important}.weekly-champion-head{padding:8px 14px 4px;background:transparent}.weekly-champion-period{font-size:11px;color:#d0c4b5}.spark-history-toggle{margin-top:10px}.spark-bars{width:100%;min-height:190px;overflow-x:auto}.spark-bars svg{display:block;width:100%;height:auto;min-width:420px}.score-field-legend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:8px 0}.score-field-legend span{padding:7px 9px;border-radius:7px;background:rgba(255,255,255,.06);font-size:11px;text-align:center;color:#d8e0eb}.score-field-legend b{display:block;font-size:12px;color:#f4c878;margin-bottom:2px}.settings-option{width:100%;text-align:left;margin:5px 0}.decklist-details{margin:0 20px 20px;border:1px solid rgba(244,179,75,.22);border-radius:10px;background:rgba(4,10,18,.4)}.decklist-details>summary{cursor:pointer;padding:13px 16px;color:#f2c77e;font-weight:600}.decklist-details .decklist-panel{margin:0;border:0}@media(max-width:600px){.score-field-legend{gap:5px}.score-field-legend span{font-size:10px;padding:6px 4px}}
+
+/* Ajustes de responsividade da visão geral */
+.home-dashboard{display:block;width:100%;min-width:0}
+.home-dashboard>.right-col{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;width:100%;min-width:0}
+.home-dashboard .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;min-width:0}
+#home{min-width:0;width:100%}
+#home .weekly-champion{width:100%;min-width:0}
+#home .table-wrap{width:100%;max-width:100%;overflow-x:auto}
+#home .panel{min-width:0}
+@media(max-width:760px){
+ main{padding:16px 12px 42px}
+ .home-dashboard>.right-col{gap:12px}
+ .home-dashboard .stats{grid-template-columns:1fr;gap:8px}
+ .home-dashboard .stat{min-height:68px;display:flex;justify-content:flex-start;padding:12px 14px}
+ #home .weekly-champion-art{min-height:210px;gap:8px;padding:18px 10px}
+ #home .weekly-champion-art .duo-portrait{width:76px;height:76px}
+ #home .weekly-champion-art .duo-name{font-size:12px}
+ #home .panel-title{flex-wrap:wrap;gap:10px}
+ #home .panel-title>span{display:flex;flex-wrap:wrap;gap:6px}
+ #home .panel-title .btn{font-size:11px;padding:8px 9px}
+ #home .shortcuts{grid-template-columns:1fr}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -735,10 +757,10 @@ nav button.active{
 <main>
  <section id="home" class="section active">
   <section class="weekly-champion" id="weeklyChampion" aria-live="polite">
-   <div class="weekly-champion-head"><div class="weekly-champion-period" id="weeklyChampionPeriod">Apuração por temporada</div></div>
+   <div class="weekly-champion-head"><h2 class="weekly-champion-title">Dupla Campeã da Semana</h2><div class="weekly-champion-period" id="weeklyChampionPeriod" aria-live="polite"></div></div>
    <div id="weeklyChampionContent" class="weekly-champion-empty">Aguardando partidas da semana.</div>
   </section>
-  <div class="dashboard-grid">
+  <div class="dashboard-grid home-dashboard">
    <div class="right-col">
     <div class="stats">
      <div class="panel stat"><div class="stat-icon">♟</div><div><b id="statPlayers">0</b><span>Participantes</span></div></div>
@@ -1008,12 +1030,13 @@ async function importDecklist(id,fileName=null,silent=false){
   if(document.getElementById('modal')?.classList.contains('open'))closeModal();
  }catch(err){console.error('Falha ao importar decklist MTGJSON:',err);if(!silent)alert('Não foi possível importar a decklist: '+err.message);}
 }
+function copyCompleteDecklist(button){const panel=button.closest('.decklist-panel');if(!panel)return;const rows=[...panel.querySelectorAll('.decklist-row')];const text=rows.map(row=>{const name=row.querySelector('span')?.textContent?.trim()||'';const count=row.querySelector('b')?.textContent?.replace('×','').trim()||'1';return `${count} ${name}`}).join('\\n');if(!text){alert('Nenhuma carta encontrada para copiar.');return}const done=()=>{const old=button.textContent;button.textContent='Lista copiada';setTimeout(()=>button.textContent=old,1600)};if(navigator.clipboard?.writeText){navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopyDecklist(text,done))}else fallbackCopyDecklist(text,done)}function fallbackCopyDecklist(text,done){const area=document.createElement('textarea');area.value=text;area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();try{document.execCommand('copy');done()}catch(e){alert('Não foi possível copiar automaticamente.')}area.remove()}
 function renderDecklistSection(deck){
  const data=deck.decklistData;if(!data)return `<div class="decklist-panel"><div class="decklist-head"><h3>Decklist completa</h3><span class="muted">Ainda não importada</span></div><p class="decklist-note">Use a opção de importação na edição do deck para buscar a lista oficial no MTGJSON.</p></div>`;
  const groups=[['Comandante',data.commander||[]],['Deck principal',data.mainBoard||[]],['Sideboard',data.sideBoard||[]],['Tokens',data.tokens||[]]].filter(g=>g[1].length);
  const total=groups.reduce((n,g)=>n+g[1].reduce((a,c)=>a+Number(c.count||1),0),0);
  const contents=groups.map(([label,cards])=>`<div class="decklist-group"><h4>${esc(label)} · ${cards.reduce((n,c)=>n+Number(c.count||1),0)}</h4>${cards.map(c=>`<div class="decklist-row" data-card-name="${esc(normalizeDeckName(c.name))}"><span>${esc(c.name)}</span><b>${Number(c.count||1)}×</b></div>`).join('')}</div>`).join('');
- return `<details class="decklist-details"><summary>Decklist completa · ${total} cartas — clique para expandir</summary><div class="decklist-panel"><div class="decklist-head"><h3>Decklist completa · ${total} cartas</h3><input class="decklist-search" type="search" placeholder="Buscar carta..." oninput="filterDecklistRows(this.value)"></div><div class="decklist-groups">${contents}</div><div class="decklist-note">Fonte: MTGJSON · ${esc(data.name||deck.name)} · ${esc(data.code||'')} · Importada em ${deck.decklistImportedAt?new Date(deck.decklistImportedAt).toLocaleDateString('pt-BR'):'data não informada'}</div><div class="decklist-actions"><button class="btn secondary" onclick="editDeck('${deck.id}')">Gerenciar decklist</button></div></div></details>`;
+ return `<details class="decklist-details"><summary>Decklist completa · ${total} cartas — clique para expandir</summary><div class="decklist-panel"><div class="decklist-head"><h3>Decklist completa · ${total} cartas</h3><input class="decklist-search" type="search" placeholder="Buscar carta..." oninput="filterDecklistRows(this.value)"></div><div class="decklist-groups">${contents}</div><div class="decklist-actions"><button class="btn secondary" type="button" onclick="copyCompleteDecklist(this)">Copiar lista completa em texto</button></div><div class="decklist-note">Fonte: MTGJSON · ${esc(data.name||deck.name)} · ${esc(data.code||'')} · Importada em ${deck.decklistImportedAt?new Date(deck.decklistImportedAt).toLocaleDateString('pt-BR'):'data não informada'}</div><div class="decklist-actions"><button class="btn secondary" onclick="editDeck('${deck.id}')">Gerenciar decklist</button></div></div></details>`;
 }
 async function importAllDecklists(){if(!db.decks.length){alert('Não há decks cadastrados.');return}if(!confirm('Buscar automaticamente as decklists dos decks cadastrados no MTGJSON? Apenas correspondências exatas e únicas serão importadas.'))return;let ok=0,miss=0;try{const index=await getMtgjsonDeckIndex();for(const deck of db.decks){if(deck.decklistData)continue;const key=normalizeDeckName(deck.name);const matches=index.filter(x=>normalizeDeckName(x.name)===key);if(matches.length!==1){miss++;continue}try{const r=await fetch(MTGJSON_BASE+'decks/'+encodeURIComponent(matches[0].fileName)+'.json');if(!r.ok){miss++;continue}const data=normalizeMtgjsonDeck(await r.json());if(!data.commander.length&&!data.mainBoard.length){miss++;continue}deck.decklistData=data;deck.decklistSource='MTGJSON';deck.decklistFile=matches[0].fileName;deck.decklistImportedAt=new Date().toISOString();ok++}catch(e){miss++}}await save();renderDeckProfile();alert(`Importação concluída.\nDecklists importadas: ${ok}\nSem correspondência segura: ${miss}`)}catch(e){alert('Não foi possível acessar o MTGJSON: '+e.message)}}
 function filterDecklistRows(value){const q=normalizeDeckName(value);document.querySelectorAll('.decklist-row').forEach(row=>{row.style.display=!q||row.dataset.cardName.includes(q)?'flex':'none'});document.querySelectorAll('.decklist-group').forEach(group=>{group.style.display=[...group.querySelectorAll('.decklist-row')].some(row=>row.style.display!=='none')?'block':'none'});}
@@ -1128,7 +1151,7 @@ function render(){
  const ranking=playerStats();document.getElementById('statPlayers').textContent=db.players.length;document.getElementById('statDecks').textContent=db.decks.length;document.getElementById('statMatches').textContent=db.matches.length;
  document.getElementById('leaderboard').innerHTML=ranking.length?(showFullRanking?ranking:ranking.slice(0,6)).map((p,i)=>`<tr><td class="rank">${i+1}</td><td>${p.photo?`<img class="avatar" src="${p.photo}" alt="">`:''}${esc(p.nick||p.name)}</td><td><b>${p.points}</b></td><td>${p.wins}</td><td>${p.draws}</td><td>${p.losses}</td><td>${p.rate.toFixed(1).replace('.',',')}% <span class="bar"><i style="width:${p.rate}%"></i></span></td></tr>`).join(''):'<tr><td colspan="7" class="empty">Cadastre participantes e lance pontuações para montar o ranking.</td></tr>';
  document.getElementById('rankingToggle').textContent=showFullRanking?'Mostrar apenas os 6 primeiros':'Ver classificação completa';
- document.getElementById('playersTable').innerHTML=ranking.length?ranking.map(p=>`<tr><td>${p.photo?`<img class="avatar" src="${p.photo}" alt="">`:''}<b>${esc(p.name)}</b><br><span class="muted">${esc(p.nick||'')}</span></td><td>${p.points}</td><td>${p.wins}</td><td>${p.draws}</td><td>${p.presences}</td><td><button class="btn secondary" onclick="editPlayer('${p.id}')">Editar</button> <button class="btn danger" onclick="deletePlayer('${p.id}')">Excluir</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">Nenhum participante cadastrado.</td></tr>';
+ document.getElementById('playersTable').innerHTML=ranking.length?[...ranking].sort((a,b)=>(a.name||'').localeCompare(b.name||'','pt-BR',{sensitivity:'base'})).map(p=>`<tr><td>${p.photo?`<img class="avatar" src="${p.photo}" alt="">`:''}<b>${esc(p.name)}</b><br><span class="muted">${esc(p.nick||'')}</span></td><td>${p.points}</td><td>${p.wins}</td><td>${p.draws}</td><td>${p.presences}</td><td><button class="btn secondary" onclick="editPlayer('${p.id}')">Editar</button> <button class="btn danger" onclick="deletePlayer('${p.id}')">Excluir</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">Nenhum participante cadastrado.</td></tr>';
  renderParticipantProfile();
  renderDeckProfile();
  document.getElementById('decksCards').innerHTML=db.decks.length?db.decks.map(d=>{const st=deckStats(d),colors=(d.colors||[]).map(c=>`${colorSymbols[c]||''} ${colorNames[c]||c}`).join(' · ')||'Cores não definidas';return `<div class="deck-card">${d.photo?`<img class="deck-photo" src="${d.photo}" alt="${esc(d.name)}">`:''}<div class="deck-color">${(d.colors||[]).map(c=>colorSymbols[c]||'').join(' ')}</div><h3>${esc(d.name)}</h3><p>${esc(colors)}</p><p>Comandante: ${esc(d.commander||'Não informado')}</p>${safeExternalUrl(d.decklistUrl||d.decklist||d.deckUrl)?`<p><a href="${esc(safeExternalUrl(d.decklistUrl||d.decklist||d.deckUrl))}" target="_blank" rel="noopener noreferrer">↗ Decklist completa</a></p>`:''}<p>Utilizações: <b>${st.uses}</b> · Vitórias: <b>${st.wins}</b> · Empates: <b>${st.draws}</b> · Derrotas: <b>${st.losses}</b></p><p>Aproveitamento: <b>${st.rate.toFixed(1).replace('.',',')}%</b></p><button class="btn secondary" onclick="editDeck('${d.id}')">Editar</button> <button class="btn danger" onclick="deleteDeck('${d.id}')">Excluir</button></div>`}).join(''):'<div class="panel empty">Nenhum deck cadastrado.</div>';
