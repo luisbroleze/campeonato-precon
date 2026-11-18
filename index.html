@@ -847,7 +847,20 @@ nav button.active{
   <div class="panel"><div class="panel-title">Criar temporada</div><div class="panel-body">
    <form id="seasonForm"><div class="form-grid"><input id="seasonName" placeholder="Nome da temporada (ex.: Temporada 2026)" required><input id="seasonStart" type="date" required><input id="seasonEnd" type="date" required></div><button class="btn">+ Criar temporada</button></form>
   </div></div>
-  <div class="panel" style="margin-top:16px"><div class="panel-title">Destaque da Semana · Prévia automática</div><div class="panel-body"><p class="muted">O destaque é montado automaticamente com as imagens dos decks utilizados pela dupla líder da semana. Não é necessário enviar uma arte.</p></div></div>
+  <div class="panel" style="margin-top:16px" id="weeklyUploadPanel"><div class="panel-title">Destaque da Semana · Imagem da dupla campeã</div><div class="panel-body">
+   <p class="muted">Envie uma arte pronta para o destaque da página inicial. A imagem será vinculada à temporada e à semana selecionadas.</p>
+   <form id="weeklyUploadForm">
+    <div class="weekly-upload-grid">
+     <label>Temporada<select id="weeklyUploadSeason" required></select></label>
+     <label>Semana<select id="weeklyUploadWeek" required></select></label>
+    </div>
+    <div style="margin:14px 0"><label for="weeklyUploadImage">Imagem da dupla campeã</label><input id="weeklyUploadImage" type="file" accept="image/png,image/jpeg,image/webp" required></div>
+    <img id="weeklyUploadPreview" class="weekly-upload-preview" alt="Prévia da imagem" style="display:none">
+    <p class="muted" style="font-size:12px">Recomendado: 1920 × 720 px. Formatos JPG, PNG ou WEBP. A imagem será ajustada ao formato horizontal do destaque.</p>
+    <div class="actions"><button type="button" class="btn secondary" id="weeklyUploadRemove">Remover imagem desta semana</button><button class="btn">Salvar destaque</button></div>
+   </form>
+   <div id="weeklyUploadStatus" class="muted" style="margin-top:10px"></div>
+  </div></div>
   <div class="panel prize" style="margin-top:16px"><div class="panel-title">🏆 TESOURO DA TEMPORADA</div><div class="panel-body">
    <div class="prize-art">🪙</div><div class="prize-label">MONTANTE ACUMULADO</div><div class="prize-amount" id="prizeTotal">R$ 0,00</div>
    <div class="prize-meta"><span id="prizeCount">0 contribuições</span><span><label for="prizeSeason">Temporada:</label> <select id="prizeSeason" style="width:auto;padding:5px"></select></span></div>
@@ -905,7 +918,7 @@ function cloudConfig(){
  }catch{return DEPLOYED_SUPABASE_CONFIG}
 }
 function initSupabase(){const c=cloudConfig();if(!c.url||!c.key||!window.supabase){supabaseClient=null;setCloudStatus('Modo local: configure URL e chave pública do Supabase para sincronizar.');return}supabaseClient=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true}});supabaseClient.auth.getSession().then(({data})=>{cloudUser=data.session?.user||null;loadCloudState()});supabaseClient.auth.onAuthStateChange((_event,session)=>{cloudUser=session?.user||null;setCloudStatus(cloudUser?'Servidor conectado · edição habilitada para a conta compartilhada':'Servidor conectado · somente visualização pública',!!cloudUser)});}
-async function loadCloudState(){if(!supabaseClient)return;try{const {data,error}=await supabaseClient.from('championship_state').select('state').eq('id',1).maybeSingle();if(error)throw error;if(data?.state){db=normalizeState(data.state);localStorage.setItem(KEY,JSON.stringify(db));cloudReady=true;render();setCloudStatus(cloudUser?'Dados sincronizados · conta conectada':'Dados carregados do servidor · modo público',!!cloudUser);subscribeRealtime()}else{cloudReady=true;setCloudStatus(cloudUser?'Servidor pronto · importe os dados deste navegador':'Servidor vazio · entre para importar os dados locais',!!cloudUser);render()}}catch(e){setCloudStatus('Falha ao conectar: '+(e.message||'verifique a configuração SQL'));console.error(e)}}
+async function loadCloudState(){if(!supabaseClient)return;try{const {data,error}=await supabaseClient.from('championship_state').select('state').eq('id',1).maybeSingle();if(error)throw error;if(data?.state){db=normalizeState(data.state);localStorage.setItem(KEY,JSON.stringify(db));cloudReady=true;render();initWeeklyUpload();setCloudStatus(cloudUser?'Dados sincronizados · conta conectada':'Dados carregados do servidor · modo público',!!cloudUser);subscribeRealtime()}else{cloudReady=true;setCloudStatus(cloudUser?'Servidor pronto · importe os dados deste navegador':'Servidor vazio · entre para importar os dados locais',!!cloudUser);render()}}catch(e){setCloudStatus('Falha ao conectar: '+(e.message||'verifique a configuração SQL'));console.error(e)}}
 function normalizeState(x){return {players:Array.isArray(x.players)?x.players:[],decks:Array.isArray(x.decks)?x.decks:[],matches:Array.isArray(x.matches)?x.matches:[],contributions:Array.isArray(x.contributions)?x.contributions:[],seasons:Array.isArray(x.seasons)?x.seasons:[],weeklyChampionUploads:Array.isArray(x.weeklyChampionUploads)?x.weeklyChampionUploads:[]}}
 function dataUrlToBlob(dataUrl){const [head,b64]=dataUrl.split(',');const mime=(head.match(/data:(.*?);base64/)||[])[1]||'image/jpeg';const raw=atob(b64);const arr=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);return new Blob([arr],{type:mime})}
 async function uploadImages(){
@@ -1187,15 +1200,54 @@ function renderWeeklyChampion(){
  period.textContent=`${ctx.season.name} · ${dateBR(ctx.start)} a ${dateBR(ctx.end)}`;
  if(!ctx.champions.length){content.className='weekly-champion-empty';content.textContent='Ainda não há partidas de duplas registradas nesta semana.';return}
 
+ const upload=(db.weeklyChampionUploads||[]).find(x=>x.seasonId===ctx.season.id&&x.weekStart===ctx.start);
+ if(!upload?.image){content.className='weekly-champion-empty';content.textContent='A dupla líder foi apurada, mas ainda não há imagem enviada pelo administrador para esta semana.';return}
  content.className='';
- content.innerHTML=ctx.champions.map(pair=>{
-  const players=pair.ids.map(id=>db.players.find(p=>p.id===id));const names=players.map(p=>esc(p?.nick||p?.name||'Participante'));
-  const deckImgs=pair.decks.map(d=>d.photo).filter(Boolean);
-  const bg1=deckImgs[0]||'',bg2=deckImgs[1]||deckImgs[0]||'';
-  const bg=`linear-gradient(90deg,#090b11c9,#090b1170,#090b11c9),url("${esc(bg1)}"),url("${esc(bg2)}")`;
-  return `<div class="weekly-champion-art" style="background-image:${bg};background-size:cover,50% 100%,50% 100%;background-position:center,left center,right center;background-repeat:no-repeat"><div class="weekly-champion-person">${players[0]?.photo?`<img src="${esc(players[0].photo)}" alt="">`:''}<strong>${names[0]}</strong><small>${pair.decks[0]?esc(pair.decks[0].name):'Deck não identificado'}</small></div><div class="weekly-champion-center"><b>Dupla Campeã</b><span>${pair.points} pontos</span></div><div class="weekly-champion-person">${players[1]?.photo?`<img src="${esc(players[1].photo)}" alt="">`:''}<strong>${names[1]}</strong><small>${pair.decks[1]?esc(pair.decks[1].name):pair.decks[0]?esc(pair.decks[0].name):'Deck não identificado'}</small></div></div>`;
- }).join(ctx.champions.length>1?'<div class="weekly-champion-tie">Empate na liderança semanal</div>':'');
+ content.innerHTML=`<div class="weekly-champion-art" style="background-image:linear-gradient(90deg,#090b1199,#090b1166,#090b1199),url('${esc(upload.image)}')"><div class="weekly-champion-center"><b>Dupla Campeã da Semana</b><span>${ctx.champions.map(p=>p.ids.map(id=>{const x=db.players.find(y=>y.id===id);return esc(x?.nick||x?.name||'Participante')}).join(' + ')).join(' / ')}</span><span>${ctx.champions[0].points} pontos</span></div></div>`;
 }
+
+function mondayISO(s){const d=new Date(s+'T12:00:00');d.setDate(d.getDate()-((d.getDay()+6)%7));return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+function refreshWeeklyUploadWeeks(){
+ const seasonId=document.getElementById('weeklyUploadSeason')?.value,season=db.seasons.find(s=>s.id===seasonId),select=document.getElementById('weeklyUploadWeek');if(!season||!select)return;
+ const opts=[];let d=new Date(season.start+'T12:00:00'),end=new Date(season.end+'T12:00:00');
+ d.setDate(d.getDate()-((d.getDay()+6)%7));
+ while(d<=end){const start=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');const e=new Date(d);e.setDate(e.getDate()+6);const finish=[e.getFullYear(),String(e.getMonth()+1).padStart(2,'0'),String(e.getDate()).padStart(2,'0')].join('-');const a=start<season.start?season.start:start,b=finish>season.end?season.end:finish;opts.push({value:a,label:`${dateBR(a)} a ${dateBR(b)}`});d.setDate(d.getDate()+7)}
+ select.innerHTML=opts.map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
+ const today=mondayISO(today());const current=opts.find(o=>o.value===today);if(current)select.value=current.value;
+ updateWeeklyUploadPreview();
+}
+function updateWeeklyUploadPreview(){
+ const img=document.getElementById('weeklyUploadPreview'),seasonId=document.getElementById('weeklyUploadSeason')?.value,week=document.getElementById('weeklyUploadWeek')?.value;
+ const saved=(db.weeklyChampionUploads||[]).find(x=>x.seasonId===seasonId&&x.weekStart===week);
+ const file=document.getElementById('weeklyUploadImage')?.files?.[0];
+ if(file){const reader=new FileReader();reader.onload=()=>{img.src=reader.result;img.style.display='block'};reader.readAsDataURL(file)}
+ else if(saved?.image){img.src=saved.image;img.style.display='block'}else{img.removeAttribute('src');img.style.display='none'}
+}
+function initWeeklyUpload(){
+ const season=document.getElementById('weeklyUploadSeason');if(!season)return;
+ season.innerHTML=db.seasons.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+ if(season.dataset.initialized){refreshWeeklyUploadWeeks();return}
+ season.dataset.initialized='1';
+ if(!db.seasons.length){document.getElementById('weeklyUploadStatus').textContent='Crie uma temporada antes de cadastrar um destaque.';return}
+ season.addEventListener('change',refreshWeeklyUploadWeeks);
+ document.getElementById('weeklyUploadWeek').addEventListener('change',()=>{document.getElementById('weeklyUploadImage').value='';updateWeeklyUploadPreview()});
+ document.getElementById('weeklyUploadImage').addEventListener('change',updateWeeklyUploadPreview);
+ document.getElementById('weeklyUploadRemove').addEventListener('click',async()=>{
+  const sid=season.value,w=document.getElementById('weeklyUploadWeek').value;
+  db.weeklyChampionUploads=(db.weeklyChampionUploads||[]).filter(x=>!(x.seasonId===sid&&x.weekStart===w));
+  await save();document.getElementById('weeklyUploadImage').value='';updateWeeklyUploadPreview();document.getElementById('weeklyUploadStatus').textContent='Imagem removida desta semana.';
+ });
+ document.getElementById('weeklyUploadForm').addEventListener('submit',async e=>{
+  e.preventDefault();try{const file=document.getElementById('weeklyUploadImage').files[0];if(!file)throw Error('Selecione uma imagem.');
+   const image=await imageToBanner(file),sid=season.value,w=document.getElementById('weeklyUploadWeek').value;
+   db.weeklyChampionUploads=(db.weeklyChampionUploads||[]).filter(x=>!(x.seasonId===sid&&x.weekStart===w));
+   db.weeklyChampionUploads.push({id:uid(),seasonId:sid,weekStart:w,image});
+   await save();document.getElementById('weeklyUploadImage').value='';updateWeeklyUploadPreview();document.getElementById('weeklyUploadStatus').textContent='Destaque salvo e sincronizado.';
+  }catch(err){document.getElementById('weeklyUploadStatus').textContent='Erro ao salvar: '+err.message}
+ });
+ refreshWeeklyUploadWeeks();
+}
+function imageToBanner(file){return new Promise((resolve,reject)=>{if(!file||!file.type.startsWith('image/'))return reject(Error('Selecione um arquivo de imagem.'));const r=new FileReader();r.onerror=reject;r.onload=()=>{const im=new Image();im.onerror=reject;im.onload=()=>{const c=document.createElement('canvas');c.width=1600;c.height=600;const scale=Math.max(1600/im.width,600/im.height),w=im.width*scale,hh=im.height*scale;c.getContext('2d').drawImage(im,(1600-w)/2,(600-hh)/2,w,hh);resolve(c.toDataURL('image/jpeg',.86))};im.src=r.result};r.readAsDataURL(file)})}
 
 function render(){
  renderWeeklyChampion();
@@ -1397,6 +1449,7 @@ function closeModal(){document.getElementById('modal').classList.remove('open')}
 function exportData(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));a.download='campeonato-precon-backup.json';a.click();URL.revokeObjectURL(a.href)}
 function importData(){const i=document.createElement('input');i.type='file';i.accept='application/json';i.onchange=()=>{const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.players||!x.decks||!x.matches||!x.contributions||!x.seasons)throw Error();db=x;save();alert('Backup importado.')}catch(e){alert('Arquivo inválido ou incompatível.')}};r.readAsText(f)};i.click()}
 const settings=document.createElement('button');settings.textContent='⚙';settings.title='Backup e configurações';settings.style.cssText='position:fixed;right:18px;bottom:18px;border:1px solid #d79b51;background:#172333;color:white;border-radius:50%;width:48px;height:48px;font-size:22px;cursor:pointer;z-index:15';settings.onclick=()=>openModal('Dados do campeonato',`<p class="muted">Faça backups regulares e configure a sincronização online.</p><div class="modal-actions"><button class="btn secondary" onclick="exportData()">Exportar backup</button><button class="btn secondary" onclick="importData()">Importar backup</button><button class="btn" onclick="openCloudSettings()">Conectar servidor / login</button></div><p class="muted" style="font-size:11px;margin-top:16px">O servidor mantém uma cópia central. Sem login, o site permanece em modo de consulta pública.</p>`);document.body.appendChild(settings);
+initWeeklyUpload();
 render();if(!document.querySelector('.score-row'))addScoreRow();initSupabase();
 </script>
 </body>
