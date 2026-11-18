@@ -856,8 +856,11 @@ async function uploadImages(){
  for(const [kind,list] of [['players',db.players],['decks',db.decks]]){
   for(const item of list){
    if(item.photo&&item.photo.startsWith('data:')){
-    const path=`${kind}/${item.id}.jpg`;
-    const {error}=await supabaseClient.storage.from('precon-images').upload(path,dataUrlToBlob(item.photo),{contentType:'image/jpeg',upsert:true});
+    // Cada nova imagem recebe um caminho único para impedir que o navegador/CDN
+    // reutilize a versão antiga que estava em cache no mesmo endereço público.
+    const version=`${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+    const path=`${kind}/${item.id}-${version}.jpg`;
+    const {error}=await supabaseClient.storage.from('precon-images').upload(path,dataUrlToBlob(item.photo),{contentType:'image/jpeg',upsert:false});
     if(error)throw new Error(`STORAGE (${kind}, ${path}): ${error.message} [${error.statusCode||error.status||'sem status'}]`);
     const {data}=supabaseClient.storage.from('precon-images').getPublicUrl(path);
     item.photo=data.publicUrl;
@@ -884,7 +887,7 @@ async function importLocalToCloud(){
   alert('Falha na importação:\n\n'+e.message+'\n\nOs dados locais foram preservados. Envie esta mensagem para diagnóstico.');
  }
 }
-function subscribeRealtime(){if(!supabaseClient)return;supabaseClient.channel('precon-state-live').on('postgres_changes',{event:'*',schema:'public',table:'championship_state',filter:'id=eq.1'},payload=>{if(payload.new?.state){db=normalizeState(payload.new.state);localStorage.setItem(KEY,JSON.stringify(db));render();setCloudStatus(cloudUser?'Dados atualizados · conta conectada':'Dados atualizados em tempo real',!!cloudUser)}}).subscribe()}
+function subscribeRealtime(){if(!supabaseClient)return;supabaseClient.channel('precon-state-live').on('postgres_changes',{event:'*',schema:'public',table:'championship_state',filter:'id=eq.1'},payload=>{if(payload.new?.state){if(cloudBusy)return;db=normalizeState(payload.new.state);localStorage.setItem(KEY,JSON.stringify(db));render();setCloudStatus(cloudUser?'Dados atualizados · conta conectada':'Dados atualizados em tempo real',!!cloudUser)}}).subscribe()}
 function openCloudSettings(){const c=cloudConfig();openModal('Conexão com Supabase',`<p class="muted">Cole a URL do projeto e a chave pública (anon / publishable). Nunca coloque a service_role key no HTML.</p><div class="field"><label>Project URL</label><input id="sbUrl" placeholder="https://xxxx.supabase.co" value="${esc(c.url||'')}"></div><div class="field"><label>Publishable / anon key</label><input id="sbKey" placeholder="sb_publishable_... ou eyJ..." value="${esc(c.key||'')}"></div><div class="modal-actions"><button class="btn secondary" onclick="saveSupabaseConfig()">Conectar</button></div><hr style="border-color:#ffffff22;margin:18px 0"><div class="field"><label>E-mail da conta compartilhada</label><input id="sbEmail" type="email" placeholder="administrador@email.com"></div><div class="field"><label>Senha</label><input id="sbPassword" type="password" placeholder="Senha da conta"></div><div class="modal-actions"><button class="btn" onclick="signInCloud()">Entrar</button><button class="btn secondary" onclick="signOutCloud()">Sair</button></div><p class="muted" style="font-size:11px">A visualização é pública. Para criar, editar e excluir dados, cada pessoa deverá usar a mesma conta compartilhada. Não compartilhe essa senha fora do grupo.</p><div class="modal-actions"><button class="btn secondary" onclick="importLocalToCloud()">Enviar dados locais para a nuvem</button></div>`)}
 function saveSupabaseConfig(){const url=document.getElementById('sbUrl').value.trim().replace(/\/$/,''),key=document.getElementById('sbKey').value.trim();if(!url||!key){alert('Informe a URL e a chave pública.');return}localStorage.setItem(CLOUD_CONFIG_KEY,JSON.stringify({url,key}));closeModal();initSupabase()}
 async function signInCloud(){if(!supabaseClient){alert('Configure a URL e a chave pública primeiro.');return}const email=document.getElementById('sbEmail').value.trim(),password=document.getElementById('sbPassword').value;if(!email||!password){alert('Informe e-mail e senha.');return}const {error}=await supabaseClient.auth.signInWithPassword({email,password});if(error){alert('Não foi possível entrar: '+error.message);return}closeModal();await loadCloudState()}
