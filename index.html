@@ -696,6 +696,27 @@ nav button.active{
 @media(max-width:760px){.deck-profile-heading{align-items:stretch;flex-direction:column}.deck-profile-controls{min-width:0;grid-template-columns:1fr 1fr}.deck-profile-hero{grid-template-columns:1fr}.deck-profile-art{min-height:220px}.deck-profile-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.deck-profile-lower{grid-template-columns:1fr}}
 @media(max-width:600px){.deck-profile-heading{padding:18px}.deck-profile-hero{padding:12px}.deck-profile-lower{padding:0 12px 14px}.deck-profile-metrics{gap:7px}}
 
+
+.weekly-champion{position:relative;overflow:hidden;margin:0 0 22px;border:1px solid rgba(224,164,82,.85);border-radius:16px;background:#111218;box-shadow:0 10px 34px rgba(0,0,0,.34)}
+.weekly-champion-head{position:relative;text-align:center;padding:18px 18px 10px;background:linear-gradient(115deg,#171820,#382516,#171820)}
+.weekly-champion-kicker{font:700 11px Inter,sans-serif;letter-spacing:3px;color:#e9b66e;text-transform:uppercase}
+.weekly-champion-title{font:700 clamp(21px,3vw,30px) Cinzel,serif;color:#ffe1ad;margin:6px 0 3px}
+.weekly-champion-period{font-size:12px;color:#d0c4b5}
+.weekly-champion-art{position:relative;isolation:isolate;overflow:hidden;min-height:260px;display:flex;align-items:center;justify-content:space-around;gap:12px;padding:26px 20px;background:#101116}
+.weekly-champion-bg{position:absolute;z-index:-2;top:0;width:50%;height:100%;object-fit:cover;opacity:.95}
+.weekly-champion-bg-left{left:0}.weekly-champion-bg-right{right:0}
+.weekly-champion-shade{position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,rgba(8,10,15,.78),rgba(8,10,15,.55) 50%,rgba(8,10,15,.78))}
+.weekly-champion-person{position:relative;z-index:1;text-align:center;width:30%;min-width:0}
+.weekly-champion-avatar{width:clamp(76px,10vw,118px);height:clamp(76px,10vw,118px);object-fit:cover;border-radius:50%;border:3px solid #d99a4e}
+.weekly-champion-person strong{display:block;color:#fff0d6;font:700 15px Cinzel,serif;margin-top:8px}
+.weekly-champion-person small{display:block;color:#f0d5ad;font-size:11px;margin-top:3px}
+.weekly-champion-center{position:relative;z-index:1;text-align:center;color:#ffe0a5;text-shadow:0 2px 12px #000;max-width:36%}
+.weekly-champion-center b{font:700 clamp(17px,2.6vw,28px) Cinzel,serif;display:block}
+.weekly-champion-center span{font-size:12px;display:block;margin-top:7px}
+.weekly-champion-empty{text-align:center;padding:24px;color:#c7b9a5;font-size:13px}
+.weekly-champion-tie{text-align:center;color:#f0d3a8;font-size:12px;padding:8px}
+@media(max-width:600px){.weekly-champion-art{min-height:220px;padding:18px 7px;gap:4px}.weekly-champion-person strong{font-size:11px}.weekly-champion-person small{font-size:9px}.weekly-champion-center b{font-size:16px}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -713,6 +734,14 @@ nav button.active{
 <main>
  <section id="home" class="section active">
   <div class="page-head"><h1>Visão Geral</h1><p>Acompanhe a classificação, o uso dos decks e o prêmio do campeonato Precon.</p></div>
+  <section class="weekly-champion" id="weeklyChampion" aria-live="polite">
+   <div class="weekly-champion-head">
+    <div class="weekly-champion-kicker">Campeonato Precon · Honra da semana</div>
+    <h2 class="weekly-champion-title">Dupla Campeã da Semana</h2>
+    <div class="weekly-champion-period" id="weeklyChampionPeriod">Apuração por temporada</div>
+   </div>
+   <div id="weeklyChampionContent" class="weekly-champion-empty">Aguardando partidas da semana.</div>
+  </section>
   <div class="dashboard-grid">
    <div class="panel prize"><div class="panel-title">🏆 PRÊMIO DA TEMPORADA</div><div class="panel-body">
     <div class="prize-art">🪙</div><div class="prize-label">TESOURO ACUMULADO</div><div class="prize-amount" id="homePrize">R$ 0,00</div>
@@ -1038,7 +1067,66 @@ document.getElementById('profilePlayer').addEventListener('change',e=>{selectedP
 document.getElementById('profileSeason').addEventListener('change',e=>{selectedProfileSeason=e.target.value;renderParticipantProfile()});
 document.getElementById('profileDeck').addEventListener('change',e=>{selectedProfileDeck=e.target.value;renderDeckProfile()});
 document.getElementById('profileDeckSeason').addEventListener('change',e=>{selectedProfileDeckSeason=e.target.value;renderDeckProfile()});
+
+function weeklyChampionContext(){
+ const now=new Date();
+ const todayStr=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');
+ const season=(db.seasons||[]).find(x=>todayStr>=x.start&&todayStr<=x.end);
+ if(!season)return null;
+ const monday=new Date(todayStr+'T12:00:00');
+ monday.setDate(monday.getDate()-((monday.getDay()+6)%7));
+ const sunday=new Date(monday);sunday.setDate(sunday.getDate()+6);
+ const iso=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
+ const start=iso(monday)<season.start?season.start:iso(monday);
+ const end=iso(sunday)>season.end?season.end:iso(sunday);
+ const groups={};
+ (db.matches||[]).filter(m=>m.date>=start&&m.date<=end&&m.groupId).forEach(m=>{
+  (groups[String(m.groupId)]||(groups[String(m.groupId)]=[])).push(m);
+ });
+ const pairs={};
+ Object.values(groups).forEach(rows=>{
+  const ids=[...new Set(rows.map(r=>r.playerId).filter(Boolean))].sort();
+  if(ids.length!==2)return;
+  const key=ids.join('|');
+  const pair=pairs[key]||(pairs[key]={ids,points:0,wins:0,games:0,playerDecks:{}});
+  rows.forEach(r=>{
+   pair.points+=Number(r.wins||0)*2+Number(r.draws||0)+(r.present?1:0)+Number(r.legacyAdjustment||0);
+   pair.wins+=Number(r.wins||0);
+   pair.games+=Number(r.wins||0)+Number(r.draws||0)+Number(r.losses||0);
+   const deck=(db.decks||[]).find(d=>d.id===r.deckId);
+   if(deck)pair.playerDecks[r.playerId]=deck;
+  });
+ });
+ const ranked=Object.values(pairs).filter(x=>x.games>0).sort((a,b)=>b.points-a.points||b.wins-a.wins);
+ return {season,start,end,champions:ranked.length?ranked.filter(x=>x.points===ranked[0].points):[]};
+}
+function renderWeeklyChampion(){
+ const period=document.getElementById('weeklyChampionPeriod');
+ const content=document.getElementById('weeklyChampionContent');
+ if(!period||!content)return;
+ const ctx=weeklyChampionContext();
+ if(!ctx){period.textContent='Nenhuma temporada vigente';content.className='weekly-champion-empty';content.textContent='Cadastre uma temporada vigente para exibir o destaque.';return}
+ const br=d=>d.split('-').reverse().join('/');
+ period.textContent=ctx.season.name+' · '+br(ctx.start)+' a '+br(ctx.end);
+ if(!ctx.champions.length){content.className='weekly-champion-empty';content.textContent='Ainda não há partidas de duplas registradas nesta semana.';return}
+ content.className='';
+ content.innerHTML=ctx.champions.map(pair=>{
+  const players=pair.ids.map(id=>(db.players||[]).find(p=>p.id===id));
+  const deckA=pair.playerDecks[pair.ids[0]],deckB=pair.playerDecks[pair.ids[1]];
+  const person=(pl,deck)=>`<div class="weekly-champion-person">${pl?.photo?`<img class="weekly-champion-avatar" src="${esc(pl.photo)}" alt="">`:''}<strong>${esc(pl?.nick||pl?.name||'Participante')}</strong><small>${esc(deck?.name||'Deck não identificado')}</small></div>`;
+  return `<article class="weekly-champion-art">
+   ${deckA?.photo?`<img class="weekly-champion-bg weekly-champion-bg-left" src="${esc(deckA.photo)}" alt="">`:''}
+   ${deckB?.photo?`<img class="weekly-champion-bg weekly-champion-bg-right" src="${esc(deckB.photo)}" alt="">`:''}
+   <div class="weekly-champion-shade"></div>
+   ${person(players[0],deckA)}
+   <div class="weekly-champion-center"><b>Dupla Campeã</b><span>${pair.points} pontos</span></div>
+   ${person(players[1],deckB)}
+  </article>`;
+ }).join(ctx.champions.length>1?'<div class="weekly-champion-tie">Empate na liderança semanal</div>':'');
+}
+
 function render(){
+ renderWeeklyChampion();
  const ranking=playerStats();document.getElementById('statPlayers').textContent=db.players.length;document.getElementById('statDecks').textContent=db.decks.length;document.getElementById('statMatches').textContent=db.matches.length;
  document.getElementById('leaderboard').innerHTML=ranking.length?(showFullRanking?ranking:ranking.slice(0,6)).map((p,i)=>`<tr><td class="rank">${i+1}</td><td>${p.photo?`<img class="avatar" src="${p.photo}" alt="">`:''}${esc(p.nick||p.name)}</td><td><b>${p.points}</b></td><td>${p.wins}</td><td>${p.draws}</td><td>${p.losses}</td><td>${p.rate.toFixed(1).replace('.',',')}% <span class="bar"><i style="width:${p.rate}%"></i></span></td></tr>`).join(''):'<tr><td colspan="7" class="empty">Cadastre participantes e lance pontuações para montar o ranking.</td></tr>';
  document.getElementById('rankingToggle').textContent=showFullRanking?'Mostrar apenas os 6 primeiros':'Ver classificação completa';
