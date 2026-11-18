@@ -696,64 +696,6 @@ nav button.active{
 @media(max-width:760px){.deck-profile-heading{align-items:stretch;flex-direction:column}.deck-profile-controls{min-width:0;grid-template-columns:1fr 1fr}.deck-profile-hero{grid-template-columns:1fr}.deck-profile-art{min-height:220px}.deck-profile-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.deck-profile-lower{grid-template-columns:1fr}}
 @media(max-width:600px){.deck-profile-heading{padding:18px}.deck-profile-hero{padding:12px}.deck-profile-lower{padding:0 12px 14px}.deck-profile-metrics{gap:7px}}
 
-
-.weekly-champion{position:relative;overflow:hidden;margin:0 0 22px;border:1px solid rgba(224,164,82,.85);border-radius:16px;background:linear-gradient(115deg,rgba(17,18,24,.98),rgba(47,27,18,.94) 55%,rgba(16,19,25,.98));box-shadow:0 10px 34px rgba(0,0,0,.34),inset 0 0 35px rgba(220,145,55,.10)}
-.weekly-champion:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0,rgba(238,169,83,.19),transparent 60%);pointer-events:none}
-.weekly-champion-head{position:relative;text-align:center;padding:18px 18px 8px}
-.weekly-champion-kicker{font:700 11px Inter,sans-serif;letter-spacing:3px;color:#e9b66e;text-transform:uppercase}
-.weekly-champion-title{font:700 clamp(21px,3vw,30px) Cinzel,serif;color:#ffe1ad;margin:6px 0 3px;text-shadow:0 2px 14px #000}
-.weekly-champion-period{font-size:12px;color:#b9b2a8}
-.weekly-champion-content{position:relative;display:flex;align-items:center;justify-content:center;gap:clamp(12px,4vw,48px);padding:14px 24px 24px}
-.weekly-champion-player{width:min(29%,190px);text-align:center;min-width:0}
-.weekly-champion-photo{width:clamp(88px,13vw,142px);height:clamp(88px,13vw,142px);object-fit:cover;border-radius:50%;border:3px solid #d99a4e;box-shadow:0 0 0 5px rgba(217,154,78,.13),0 8px 24px #0009;background:#25252a}
-.weekly-champion-placeholder{width:clamp(88px,13vw,142px);height:clamp(88px,13vw,142px);display:inline-flex;align-items:center;justify-content:center;border-radius:50%;border:3px solid #b78348;background:linear-gradient(145deg,#39302a,#17191f);font:700 34px Cinzel;color:#eac184}
-.weekly-champion-name{font:700 15px Cinzel,serif;color:#fff0d6;margin-top:10px;overflow-wrap:anywhere}
-.weekly-champion-deck{font-size:11px;color:#c7b9a5;margin-top:4px;line-height:1.35}
-.weekly-champion-emblem{flex:0 0 auto;text-align:center;color:#efbd70;text-shadow:0 0 20px #df923d88}
-.weekly-champion-emblem span{display:block;font-size:clamp(32px,5vw,52px);line-height:1}
-.weekly-champion-emblem small{display:block;font:700 9px Inter,sans-serif;letter-spacing:2px;margin-top:8px;color:#e4c18d}
-.weekly-champion-score{font:700 13px Cinzel,serif;color:#f4d29e;margin-top:8px}
-.weekly-champion-empty{position:relative;text-align:center;padding:24px;color:#c7b9a5;font-size:13px}
-.weekly-champion-tie{position:relative;text-align:center;color:#f0d3a8;font-size:12px;padding:0 12px 14px}
-@media(max-width:600px){.weekly-champion{margin-bottom:14px}.weekly-champion-head{padding:15px 10px 5px}.weekly-champion-content{gap:8px;padding:12px 8px 18px}.weekly-champion-player{width:35%}.weekly-champion-name{font-size:12px}.weekly-champion-deck{font-size:10px}.weekly-champion-emblem small{font-size:8px;letter-spacing:1px}}
-
-
-.weekly-champion{position:relative;overflow:hidden;margin:0 0 22px;border:1px solid rgba(224,164,82,.85);border-radius:16px;background:linear-gradient(115deg,#111218,#2f1b12 55%,#101319);box-shadow:0 10px 34px #0008,inset 0 0 35px #dc91371a}
-.weekly-champion-head{text-align:center;padding:18px 18px 8px;position:relative;z-index:2}
-.weekly-champion-kicker{font:700 11px Inter,sans-serif;letter-spacing:3px;color:#e9b66e;text-transform:uppercase}
-.weekly-champion-title{font:700 clamp(21px,3vw,30px) Cinzel,serif;color:#ffe1ad;margin:6px 0 3px}
-.weekly-champion-period{font-size:12px;color:#b9b2a8}
-.weekly-champion-art{position:relative;min-height:260px;display:flex;align-items:center;justify-content:space-around;gap:12px;padding:26px 20px;background-size:cover;background-position:center;border-top:1px solid #d49b53}
-.weekly-champion-art:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#090b11a8,#090b1180 48%,#090b11a8)}
-.weekly-champion-person{position:relative;z-index:1;text-align:center;width:28%;min-width:0}
-.weekly-champion-person img{width:clamp(76px,10vw,118px);height:clamp(76px,10vw,118px);object-fit:cover;border-radius:50%;border:3px solid #d99a4e;box-shadow:0 0 0 5px #d99a4e22,0 8px 24px #0009}
-.weekly-champion-person strong{display:block;color:#fff0d6;font:700 15px Cinzel,serif;margin-top:8px;text-shadow:0 2px 6px #000}
-.weekly-champion-person small{display:block;color:#f0d5ad;font-size:11px;margin-top:3px;text-shadow:0 2px 5px #000}
-.weekly-champion-center{position:relative;z-index:1;text-align:center;color:#ffe0a5;text-shadow:0 2px 12px #000;max-width:36%}
-.weekly-champion-center b{font:700 clamp(17px,2.6vw,28px) Cinzel,serif;display:block}
-.weekly-champion-center span{font-size:12px;display:block;margin-top:7px}
-.weekly-champion-empty{text-align:center;padding:24px;color:#c7b9a5;font-size:13px}
-.weekly-champion-tie{text-align:center;color:#f0d3a8;font-size:12px;padding:8px}
-.weekly-upload-preview{width:100%;max-height:190px;object-fit:cover;border:1px solid #b78348;border-radius:8px;background:#17191f}
-.weekly-upload-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-@media(max-width:600px){.weekly-champion-art{min-height:220px;padding:18px 7px;gap:4px}.weekly-champion-person{width:31%}.weekly-champion-person strong{font-size:11px}.weekly-champion-person small{font-size:9px}.weekly-champion-center{max-width:34%}.weekly-champion-center b{font-size:16px}.weekly-upload-grid{grid-template-columns:1fr}}
-
-
-.weekly-champion-art{position:relative;isolation:isolate;overflow:hidden;min-height:260px;display:flex;align-items:center;justify-content:space-around;gap:12px;padding:26px 20px;border-top:1px solid #d49b53;background:#101116}
-.weekly-champion-bg{position:absolute;z-index:-2;top:0;width:50%;height:100%;object-fit:cover;filter:saturate(.95);opacity:.92}
-.weekly-champion-bg-left{left:0}
-.weekly-champion-bg-right{right:0}
-.weekly-champion-no-bg{position:absolute;z-index:-2;inset:0;background:radial-gradient(ellipse at center,#49331f,#101116 72%)}
-.weekly-champion-shade{position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,rgba(8,10,15,.82),rgba(8,10,15,.58) 50%,rgba(8,10,15,.82))}
-.weekly-champion-person{position:relative;z-index:1;text-align:center;width:28%;min-width:0}
-.weekly-champion-avatar{width:clamp(76px,10vw,118px);height:clamp(76px,10vw,118px);object-fit:cover;border-radius:50%;border:3px solid #d99a4e;box-shadow:0 0 0 5px #d99a4e22,0 8px 24px #0009}
-.weekly-champion-person strong{display:block;color:#fff0d6;font:700 15px Cinzel,serif;margin-top:8px;text-shadow:0 2px 6px #000}
-.weekly-champion-person small{display:block;color:#f0d5ad;font-size:11px;margin-top:3px;text-shadow:0 2px 5px #000}
-.weekly-champion-center{position:relative;z-index:1;text-align:center;color:#ffe0a5;text-shadow:0 2px 12px #000;max-width:36%}
-.weekly-champion-center b{font:700 clamp(17px,2.6vw,28px) Cinzel,serif;display:block}
-.weekly-champion-center span{font-size:12px;display:block;margin-top:7px}
-@media(max-width:600px){.weekly-champion-art{min-height:220px;padding:18px 7px;gap:4px}.weekly-champion-person{width:31%}.weekly-champion-person strong{font-size:11px}.weekly-champion-person small{font-size:9px}.weekly-champion-center{max-width:34%}.weekly-champion-center b{font-size:16px}}
-
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -771,15 +713,6 @@ nav button.active{
 <main>
  <section id="home" class="section active">
   <div class="page-head"><h1>Visão Geral</h1><p>Acompanhe a classificação, o uso dos decks e o prêmio do campeonato Precon.</p></div>
-  <section class="weekly-champion" id="weeklyChampion" aria-live="polite">
-   <div class="weekly-champion-head">
-    <div class="weekly-champion-kicker">Campeonato Precon · Honra da semana</div>
-    <h2 class="weekly-champion-title">Dupla Campeã da Semana</h2>
-    <div class="weekly-champion-period" id="weeklyChampionPeriod">Apuração por temporada</div>
-   </div>
-   <div id="weeklyChampionContent" class="weekly-champion-empty">Aguardando partidas da semana.</div>
-  </section>
-
   <div class="dashboard-grid">
    <div class="panel prize"><div class="panel-title">🏆 PRÊMIO DA TEMPORADA</div><div class="panel-body">
     <div class="prize-art">🪙</div><div class="prize-label">TESOURO ACUMULADO</div><div class="prize-amount" id="homePrize">R$ 0,00</div>
@@ -860,7 +793,6 @@ nav button.active{
   <div class="panel"><div class="panel-title">Criar temporada</div><div class="panel-body">
    <form id="seasonForm"><div class="form-grid"><input id="seasonName" placeholder="Nome da temporada (ex.: Temporada 2026)" required><input id="seasonStart" type="date" required><input id="seasonEnd" type="date" required></div><button class="btn">+ Criar temporada</button></form>
   </div></div>
-  <div class="panel" style="margin-top:16px"><div class="panel-title">Destaque da Semana · Prévia automática</div><div class="panel-body"><p class="muted">O destaque é montado automaticamente com as imagens dos decks utilizados pela dupla líder da semana. Não é necessário enviar uma arte.</p></div></div>
   <div class="panel prize" style="margin-top:16px"><div class="panel-title">🏆 TESOURO DA TEMPORADA</div><div class="panel-body">
    <div class="prize-art">🪙</div><div class="prize-label">MONTANTE ACUMULADO</div><div class="prize-amount" id="prizeTotal">R$ 0,00</div>
    <div class="prize-meta"><span id="prizeCount">0 contribuições</span><span><label for="prizeSeason">Temporada:</label> <select id="prizeSeason" style="width:auto;padding:5px"></select></span></div>
@@ -919,21 +851,21 @@ function cloudConfig(){
 }
 function initSupabase(){const c=cloudConfig();if(!c.url||!c.key||!window.supabase){supabaseClient=null;setCloudStatus('Modo local: configure URL e chave pública do Supabase para sincronizar.');return}supabaseClient=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true}});supabaseClient.auth.getSession().then(({data})=>{cloudUser=data.session?.user||null;loadCloudState()});supabaseClient.auth.onAuthStateChange((_event,session)=>{cloudUser=session?.user||null;setCloudStatus(cloudUser?'Servidor conectado · edição habilitada para a conta compartilhada':'Servidor conectado · somente visualização pública',!!cloudUser)});}
 async function loadCloudState(){if(!supabaseClient)return;try{const {data,error}=await supabaseClient.from('championship_state').select('state').eq('id',1).maybeSingle();if(error)throw error;if(data?.state){db=normalizeState(data.state);localStorage.setItem(KEY,JSON.stringify(db));cloudReady=true;render();setCloudStatus(cloudUser?'Dados sincronizados · conta conectada':'Dados carregados do servidor · modo público',!!cloudUser);subscribeRealtime()}else{cloudReady=true;setCloudStatus(cloudUser?'Servidor pronto · importe os dados deste navegador':'Servidor vazio · entre para importar os dados locais',!!cloudUser);render()}}catch(e){setCloudStatus('Falha ao conectar: '+(e.message||'verifique a configuração SQL'));console.error(e)}}
-function normalizeState(x){return {players:Array.isArray(x.players)?x.players:[],decks:Array.isArray(x.decks)?x.decks:[],matches:Array.isArray(x.matches)?x.matches:[],contributions:Array.isArray(x.contributions)?x.contributions:[],seasons:Array.isArray(x.seasons)?x.seasons:[],weeklyChampionUploads:Array.isArray(x.weeklyChampionUploads)?x.weeklyChampionUploads:[]}}
+function normalizeState(x){return {players:Array.isArray(x.players)?x.players:[],decks:Array.isArray(x.decks)?x.decks:[],matches:Array.isArray(x.matches)?x.matches:[],contributions:Array.isArray(x.contributions)?x.contributions:[],seasons:Array.isArray(x.seasons)?x.seasons:[]}}
 function dataUrlToBlob(dataUrl){const [head,b64]=dataUrl.split(',');const mime=(head.match(/data:(.*?);base64/)||[])[1]||'image/jpeg';const raw=atob(b64);const arr=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);return new Blob([arr],{type:mime})}
 async function uploadImages(){
  if(!supabaseClient)return;
- for(const [kind,list,field] of [['players',db.players,'photo'],['decks',db.decks,'photo'],['weekly-champions',db.weeklyChampionUploads||[],'image']]){
+ for(const [kind,list] of [['players',db.players],['decks',db.decks]]){
   for(const item of list){
-   if(item[field]&&item[field].startsWith('data:')){
+   if(item.photo&&item.photo.startsWith('data:')){
     // Cada nova imagem recebe um caminho único para impedir que o navegador/CDN
     // reutilize a versão antiga que estava em cache no mesmo endereço público.
     const version=`${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
     const path=`${kind}/${item.id}-${version}.jpg`;
-    const {error}=await supabaseClient.storage.from('precon-images').upload(path,dataUrlToBlob(item[field]),{contentType:'image/jpeg',upsert:false});
+    const {error}=await supabaseClient.storage.from('precon-images').upload(path,dataUrlToBlob(item.photo),{contentType:'image/jpeg',upsert:false});
     if(error)throw new Error(`STORAGE (${kind}, ${path}): ${error.message} [${error.statusCode||error.status||'sem status'}]`);
     const {data}=supabaseClient.storage.from('precon-images').getPublicUrl(path);
-    item[field]=data.publicUrl;
+    item.photo=data.publicUrl;
    }
   }
  }
@@ -1106,35 +1038,7 @@ document.getElementById('profilePlayer').addEventListener('change',e=>{selectedP
 document.getElementById('profileSeason').addEventListener('change',e=>{selectedProfileSeason=e.target.value;renderParticipantProfile()});
 document.getElementById('profileDeck').addEventListener('change',e=>{selectedProfileDeck=e.target.value;renderDeckProfile()});
 document.getElementById('profileDeckSeason').addEventListener('change',e=>{selectedProfileDeckSeason=e.target.value;renderDeckProfile()});
-
-
-function renderWeeklyChampion(){
- const period=document.getElementById('weeklyChampionPeriod'),content=document.getElementById('weeklyChampionContent');
- if(!period||!content)return;
- const ctx=weeklyChampionContext();
- if(!ctx){period.textContent='Nenhuma temporada vigente';content.className='weekly-champion-empty';content.textContent='Cadastre ou ative uma temporada para exibir o destaque semanal.';return}
- period.textContent=`${ctx.season.name} · ${dateBR(ctx.start)} a ${dateBR(ctx.end)}`;
- if(!ctx.champions.length){content.className='weekly-champion-empty';content.textContent='Ainda não há partidas de duplas registradas nesta semana.';return}
- content.className='';
- content.innerHTML=ctx.champions.map(pair=>{
-  const players=pair.ids.map(id=>db.players.find(p=>p.id===id));
-  const deckA=pair.playerDecks[pair.ids[0]],deckB=pair.playerDecks[pair.ids[1]];
-  const photoA=deckA?.photo||'',photoB=deckB?.photo||'';
-  const playerMarkup=(player,deck)=>`<div class="weekly-champion-person">${player?.photo?`<img class="weekly-champion-avatar" src="${esc(player.photo)}" alt="">`:''}<strong>${esc(player?.nick||player?.name||'Participante')}</strong><small>${esc(deck?.name||'Deck não identificado')}</small></div>`;
-  return `<article class="weekly-champion-art">
-   ${photoA?`<img class="weekly-champion-bg weekly-champion-bg-left" src="${esc(photoA)}" alt="">`:''}
-   ${photoB?`<img class="weekly-champion-bg weekly-champion-bg-right" src="${esc(photoB)}" alt="">`:''}
-   ${!photoA&&!photoB?'<div class="weekly-champion-no-bg"></div>':''}
-   <div class="weekly-champion-shade"></div>
-   ${playerMarkup(players[0],deckA)}
-   <div class="weekly-champion-center"><b>Dupla Campeã</b><span>${pair.points} pontos</span></div>
-   ${playerMarkup(players[1],deckB)}
-  </article>`;
- }).join(ctx.champions.length>1?'<div class="weekly-champion-tie">Empate na liderança semanal</div>':'');
-}
-
 function render(){
- renderWeeklyChampion();
  const ranking=playerStats();document.getElementById('statPlayers').textContent=db.players.length;document.getElementById('statDecks').textContent=db.decks.length;document.getElementById('statMatches').textContent=db.matches.length;
  document.getElementById('leaderboard').innerHTML=ranking.length?(showFullRanking?ranking:ranking.slice(0,6)).map((p,i)=>`<tr><td class="rank">${i+1}</td><td>${p.photo?`<img class="avatar" src="${p.photo}" alt="">`:''}${esc(p.nick||p.name)}</td><td><b>${p.points}</b></td><td>${p.wins}</td><td>${p.draws}</td><td>${p.losses}</td><td>${p.rate.toFixed(1).replace('.',',')}% <span class="bar"><i style="width:${p.rate}%"></i></span></td></tr>`).join(''):'<tr><td colspan="7" class="empty">Cadastre participantes e lance pontuações para montar o ranking.</td></tr>';
  document.getElementById('rankingToggle').textContent=showFullRanking?'Mostrar apenas os 6 primeiros':'Ver classificação completa';
