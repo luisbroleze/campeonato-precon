@@ -786,6 +786,40 @@ nav button.active{
 .modal-content th{position:sticky;top:0;z-index:2;background:#172333}
 .modal-content input,.modal-content select,.modal-content textarea{max-width:100%}
 @media(max-width:640px){.modal-backdrop{padding:8px;align-items:flex-start}.modal{width:100%;max-height:calc(100vh - 16px);max-height:calc(100dvh - 16px)}.modal-head{padding:13px 15px;font-size:17px}.modal-content{padding:13px;max-height:calc(100dvh - 76px)}.modal-content .form-grid{grid-template-columns:minmax(0,1fr)}.modal-content .table-wrap{max-height:55vh;padding:0 4px 8px}}
+
+/* Mural de comentários */
+.comments-layout{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(0,1.4fr);gap:18px;align-items:start}
+.comments-compose .panel-body,.comments-feed .panel-body{padding:18px}
+#commentParticipant,#commentBody{width:100%;box-sizing:border-box}
+#commentBody{resize:vertical;min-height:110px}
+.comment-char-count{text-align:right;color:#9ca9b8;font-size:11px;margin-top:4px}
+.comment-note{font-size:12px;line-height:1.5;margin-top:12px}
+.comment-status{margin-top:10px;font-size:13px;color:#f0c47d}
+.comment-item{padding:14px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.comment-item:first-child{padding-top:0}.comment-item:last-child{border-bottom:0;padding-bottom:0}
+.comment-item-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.comment-author{font-weight:700;color:#f3d6a6}.comment-date{font-size:11px;color:#94a0af}
+.comment-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55;margin-top:7px;color:#e1e6ed}
+.comment-pending{display:inline-block;font-size:10px;color:#f1c477;border:1px solid rgba(241,196,119,.4);border-radius:20px;padding:2px 8px;margin-left:7px}
+.comment-moderation-item{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.comment-moderation-item:last-child{border-bottom:0}
+.comment-moderation-actions{display:flex;gap:7px;flex-wrap:wrap;flex-shrink:0}
+.comment-moderation-actions .btn{padding:7px 10px;font-size:12px}
+@media(max-width:760px){.comments-layout{grid-template-columns:minmax(0,1fr)}.comment-moderation-item{flex-direction:column}.comment-moderation-actions{width:100%}}
+
+/* Visão geral: classificação e mural de comentários lado a lado, responsivos */
+.home-season-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:10px 14px;margin:14px 0}
+.home-season-toolbar label{font-size:12px;color:#c5ccd5;font-weight:700}
+.home-season-toolbar select{width:min(280px,65%)}
+.home-main-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr);gap:16px;align-items:start;width:100%;min-width:0}
+.home-main-grid>*{min-width:0}
+.home-ranking-panel .table-wrap{max-width:100%;overflow:auto}
+.home-comments-column{display:grid;gap:14px;min-width:0}
+.home-comments-column .panel{min-width:0}
+.home-comments-column .panel-body{max-height:340px;overflow:auto;overscroll-behavior:contain}
+.home-comments-column .comments-compose .panel-body{max-height:none}
+@media(max-width:980px){.home-main-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:640px){.home-season-toolbar{justify-content:space-between}.home-season-toolbar select{width:68%}.home-main-grid{gap:12px}.home-ranking-panel .table-wrap table{min-width:650px}.home-comments-column .panel-body{max-height:300px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -806,11 +840,24 @@ nav button.active{
    <div class="weekly-champion-head"><h2 class="weekly-champion-title">Dupla Campeã da Semana</h2><div class="weekly-champion-period" id="weeklyChampionPeriod" aria-live="polite"></div></div>
    <div id="weeklyChampionContent" class="weekly-champion-empty">Aguardando partidas da semana.</div>
   </section>
-  <div class="dashboard-grid home-dashboard">
-   <div class="right-col">
-    <div class="panel"><div class="panel-title">♛ Classificação Geral <span><button class="btn secondary" id="rankingToggle" onclick="toggleFullRanking()">Ver classificação completa</button> <button class="btn secondary" onclick="showPage('players')">Ver participantes →</button></span></div>
-     <div class="table-wrap"><table><thead><tr><th>#</th><th>Participante</th><th>Pontos</th><th>Vitórias</th><th>Empates</th><th>Derrotas</th><th>Aproveitamento</th></tr></thead><tbody id="leaderboard"></tbody></table></div>
-    </div>
+  <div class="home-season-toolbar panel">
+   <label for="homeSeasonSelect">Temporada</label>
+   <select id="homeSeasonSelect" aria-label="Selecionar temporada"></select>
+  </div>
+  <div class="home-main-grid">
+   <div class="panel home-ranking-panel"><div class="panel-title">♛ Classificação Geral <span><button class="btn secondary" id="rankingToggle" onclick="toggleFullRanking()">Ver classificação completa</button> <button class="btn secondary" onclick="showPage('players')">Ver participantes →</button></span></div>
+    <div class="table-wrap"><table><thead><tr><th>#</th><th>Participante</th><th>Pontos</th><th>Vitórias</th><th>Empates</th><th>Derrotas</th><th>Aproveitamento</th></tr></thead><tbody id="leaderboard"></tbody></table></div>
+   </div>
+   <div class="home-comments-column">
+    <div class="panel comments-compose"><div class="panel-title">✎ Deixe seu comentário</div><div class="panel-body">
+     <form id="commentForm">
+      <div class="field"><label for="commentParticipant">Participante cadastrado</label><select id="commentParticipant" required><option value="">Selecione seu nome</option></select></div>
+      <div class="field"><label for="commentBody">Comentário</label><textarea id="commentBody" rows="3" maxlength="500" placeholder="Escreva sua mensagem (máximo de 500 caracteres)" required></textarea><div class="comment-char-count"><span id="commentCharCount">0</span>/500</div></div>
+      <button class="btn" id="commentSubmit" type="submit">Enviar para aprovação</button>
+      <p class="muted comment-note">Comentários passam por aprovação antes de aparecer no mural.</p>
+     </form><div id="commentFormStatus" class="comment-status" role="status" aria-live="polite"></div>
+    </div></div>
+    <div class="panel comments-feed"><div class="panel-title">Mural da temporada <span id="commentsCount" class="muted"></span></div><div class="panel-body" id="commentsFeed"><div class="empty">Conectando ao mural…</div></div></div>
    </div>
   </div>
   <div class="panel prize" style="margin-top:20px"><div class="panel-title">🏆 TESOURO ACUMULADO</div><div class="panel-body">
@@ -892,6 +939,7 @@ nav button.active{
   </div></div>
   <div class="panel" style="margin-top:16px"><div class="panel-title">Histórico de contribuições</div><div class="table-wrap"><table><thead><tr><th>Data</th><th>Contribuinte</th><th>Valor</th><th>Ações</th></tr></thead><tbody id="prizesTable"></tbody></table></div></div>
  </section>
+
  <footer>CAMPEONATO PRECON · MAGIC: THE GATHERING · Dados sincronizados pelo Supabase</footer>
 </main>
 <div class="modal-backdrop" id="modal"><div class="modal"><div class="modal-head"><span id="modalTitle">Editar</span><button class="btn secondary" onclick="closeModal()">✕</button></div><div class="modal-content" id="modalContent"></div></div></div>
@@ -939,7 +987,7 @@ function cloudConfig(){
   return DEPLOYED_SUPABASE_CONFIG.url&&DEPLOYED_SUPABASE_CONFIG.key?DEPLOYED_SUPABASE_CONFIG:saved;
  }catch{return DEPLOYED_SUPABASE_CONFIG}
 }
-function initSupabase(){const c=cloudConfig();if(!c.url||!c.key||!window.supabase){supabaseClient=null;setCloudStatus('Modo local: configure URL e chave pública do Supabase para sincronizar.');return}supabaseClient=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true}});supabaseClient.auth.getSession().then(({data})=>{cloudUser=data.session?.user||null;loadCloudState()});supabaseClient.auth.onAuthStateChange((_event,session)=>{cloudUser=session?.user||null;setCloudStatus(cloudUser?'Servidor conectado · edição habilitada para a conta compartilhada':'Servidor conectado · somente visualização pública',!!cloudUser)});}
+function initSupabase(){const c=cloudConfig();if(!c.url||!c.key||!window.supabase){supabaseClient=null;setCloudStatus('Modo local: configure URL e chave pública do Supabase para sincronizar.');return}supabaseClient=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true}});supabaseClient.auth.getSession().then(({data})=>{cloudUser=data.session?.user||null;loadCloudState().then(()=>{loadComments();subscribeComments()})});supabaseClient.auth.onAuthStateChange((_event,session)=>{cloudUser=session?.user||null;setCloudStatus(cloudUser?'Servidor conectado · edição habilitada para a conta compartilhada':'Servidor conectado · somente visualização pública',!!cloudUser);loadComments()});}
 async function loadCloudState(){if(!supabaseClient)return;try{const {data,error}=await supabaseClient.from('championship_state').select('state').eq('id',1).maybeSingle();if(error)throw error;if(data?.state){db=normalizeState(data.state);localStorage.setItem(KEY,JSON.stringify(db));cloudReady=true;render();setCloudStatus(cloudUser?'Dados sincronizados · conta conectada':'Dados carregados do servidor · modo público',!!cloudUser);subscribeRealtime()}else{cloudReady=true;setCloudStatus(cloudUser?'Servidor pronto · importe os dados deste navegador':'Servidor vazio · entre para importar os dados locais',!!cloudUser);render()}}catch(e){setCloudStatus('Falha ao conectar: '+(e.message||'verifique a configuração SQL'));console.error(e)}}
 function normalizeState(x){return {players:Array.isArray(x.players)?x.players:[],decks:Array.isArray(x.decks)?x.decks:[],matches:Array.isArray(x.matches)?x.matches:[],contributions:Array.isArray(x.contributions)?x.contributions:[],seasons:Array.isArray(x.seasons)?x.seasons:[]}}
 function dataUrlToBlob(dataUrl){const [head,b64]=dataUrl.split(',');const mime=(head.match(/data:(.*?);base64/)||[])[1]||'image/jpeg';const raw=atob(b64);const arr=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)arr[i]=raw.charCodeAt(i);return new Blob([arr],{type:mime})}
@@ -1207,11 +1255,22 @@ function renderWeeklyChampion(){
 
 function selectDeckProfile(id){selectedProfileDeck=id;deckSparkShowAll=false;renderDeckProfile();const select=document.getElementById('profileDeck');if(select)select.value=id}
 function renderDeckCatalogCard(d){const st=deckStats(d),colors=(d.colors||[]).map(c=>`${colorSymbols[c]||''} ${colorNames[c]||c}`).join(' · ')||'Cores não definidas';return `<div class="deck-card deck-catalog-selectable ${selectedProfileDeck===d.id?'is-selected':''}" role="button" tabindex="0" onclick="selectDeckProfile('${d.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectDeckProfile('${d.id}')}">${d.photo?`<img class="deck-photo" src="${d.photo}" alt="${esc(d.name)}">`:''}<div class="deck-color">${(d.colors||[]).map(c=>colorSymbols[c]||'').join(' ')}</div><h3>${esc(d.name)}</h3><p>${esc(colors)}</p><p>Comandante: ${esc(d.commander||'Não informado')}</p>${safeExternalUrl(d.decklistUrl||d.decklist||d.deckUrl)?`<p><a href="${esc(safeExternalUrl(d.decklistUrl||d.decklist||d.deckUrl))}" target="_blank" rel="noopener noreferrer">↗ Decklist completa</a></p>`:''}<p>Utilizações: <b>${st.uses}</b> · Vitórias: <b>${st.wins}</b> · Empates: <b>${st.draws}</b> · Derrotas: <b>${st.losses}</b></p><p>Aproveitamento: <b>${st.rate.toFixed(1).replace('.',',')}%</b></p><button class="btn secondary" onclick="event.stopPropagation();editDeck('${d.id}')">Editar</button> <button class="btn danger" onclick="event.stopPropagation();deleteDeck('${d.id}')">Excluir</button></div>`}
+let commentsCache=[];let commentsChannel=null;let commentsLoaded=false;
+function populateCommentParticipants(){const select=document.getElementById('commentParticipant');if(!select)return;const current=select.value;select.innerHTML='<option value="">Selecione seu nome</option>'+[...db.players].sort((a,b)=>(a.name||'').localeCompare(b.name||'','pt-BR',{sensitivity:'base'})).map(p=>`<option value="${esc(p.id)}">${esc(p.name)}${p.nick&&p.nick!==p.name?' · '+esc(p.nick):''}</option>`).join('');if(db.players.some(p=>p.id===current))select.value=current;}
+function formatCommentDate(value){const d=new Date(value);return Number.isNaN(d.getTime())?'':d.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});}
+function renderComments(){const feed=document.getElementById('commentsFeed');if(!feed)return;const approved=commentsCache.filter(c=>c.status==='approved'&&c.season_id===selectedSeason).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));document.getElementById('commentsCount').textContent=`${approved.length} comentário(s)`;feed.innerHTML=approved.length?approved.map(c=>`<article class="comment-item"><div class="comment-item-head"><span class="comment-author">${esc(c.participant_name)}</span><time class="comment-date">${formatCommentDate(c.created_at)}</time></div><div class="comment-text">${esc(c.body)}</div></article>`).join(''):'<div class="empty">Ainda não há comentários aprovados. Seja o primeiro a participar.</div>';renderCommentModeration();}
+function renderCommentModeration(){const host=document.getElementById('pendingComments');if(!host)return;if(!cloudUser){host.innerHTML='<div class="empty">Entre com a conta administrativa para visualizar e moderar comentários pendentes.</div>';return;}const pending=commentsCache.filter(c=>c.status==='pending'&&c.season_id===selectedSeason).sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));host.innerHTML=pending.length?pending.map(c=>`<div class="comment-moderation-item"><div><div class="comment-item-head"><b>${esc(c.participant_name)}</b><time class="comment-date">${formatCommentDate(c.created_at)}</time></div><div class="comment-text">${esc(c.body)}</div></div><div class="comment-moderation-actions"><button class="btn" onclick="reviewComment('${c.id}','approved')">Aprovar</button><button class="btn secondary" onclick="reviewComment('${c.id}','rejected')">Rejeitar</button></div></div>`).join(''):'<div class="empty">Não há comentários pendentes.</div>';}
+async function loadComments(){if(!supabaseClient){const feed=document.getElementById('commentsFeed');if(feed)feed.innerHTML='<div class="empty">O mural depende da conexão com o servidor. Configure o Supabase para utilizá-lo.</div>';return;}try{const {data,error}=await supabaseClient.from('precon_comments').select('*').order('created_at',{ascending:false}).limit(200);if(error)throw error;commentsCache=data||[];commentsLoaded=true;populateCommentParticipants();renderComments();}catch(e){const feed=document.getElementById('commentsFeed');if(feed)feed.innerHTML=`<div class="empty">Não foi possível carregar os comentários: ${esc(e.message||'erro de conexão')}</div>`;console.error('Erro ao carregar comentários:',e);}}
+function subscribeComments(){if(!supabaseClient||commentsChannel)return;commentsChannel=supabaseClient.channel('precon-comments-live').on('postgres_changes',{event:'*',schema:'public',table:'precon_comments'},()=>loadComments()).subscribe();}
+async function submitComment(event){event.preventDefault();const status=document.getElementById('commentFormStatus'),button=document.getElementById('commentSubmit'),playerId=document.getElementById('commentParticipant').value,body=document.getElementById('commentBody').value.trim(),player=db.players.find(p=>p.id===playerId);if(!player){status.textContent='Selecione um participante cadastrado.';return;}if(!selectedSeason){status.textContent='Selecione uma temporada antes de comentar.';return;}if(body.length<3||body.length>500){status.textContent='O comentário deve ter entre 3 e 500 caracteres.';return;}if(!supabaseClient){status.textContent='O servidor não está conectado.';return;}button.disabled=true;status.textContent='Enviando para aprovação…';try{const {error}=await supabaseClient.rpc('submit_precon_comment',{p_participant_id:String(player.id),p_participant_name:String(player.name),p_body:body,p_season_id:String(selectedSeason)});if(error)throw error;document.getElementById('commentBody').value='';document.getElementById('commentCharCount').textContent='0';status.textContent='Comentário enviado. Ele aparecerá no mural após aprovação da administração.';}catch(e){status.textContent=e.message||'Não foi possível enviar o comentário.';console.error('Erro ao enviar comentário:',e);}finally{button.disabled=false;}}
+async function reviewComment(id,decision){if(!cloudUser){alert('Entre com a conta administrativa para moderar comentários.');return;}try{const {error}=await supabaseClient.rpc('review_precon_comment',{p_comment_id:id,p_decision:decision});if(error)throw error;await loadComments();}catch(e){alert('Não foi possível atualizar o comentário: '+(e.message||e));}}
+async function deleteComment(id){if(!cloudUser||!confirm('Excluir permanentemente este comentário?'))return;try{const {error}=await supabaseClient.rpc('delete_precon_comment',{p_comment_id:id});if(error)throw error;await loadComments();}catch(e){alert('Não foi possível excluir o comentário: '+(e.message||e));}}
 function render(){
  renderWeeklyChampion();
+ populateCommentParticipants();
  const ranking=playerStats();document.getElementById('statPlayers').textContent=db.players.length;document.getElementById('statDecks').textContent=db.decks.length;document.getElementById('statMatches').textContent=db.matches.length;
- document.getElementById('leaderboard').innerHTML=ranking.length?(showFullRanking?ranking:ranking.slice(0,6)).map((p,i)=>`<tr><td class="rank">${i+1}</td><td>${p.photo?`<img class="avatar" src="${p.photo}" alt="">`:''}${esc(p.nick||p.name)}</td><td><b>${p.points}</b></td><td>${p.wins}</td><td>${p.draws}</td><td>${p.losses}</td><td>${p.rate.toFixed(1).replace('.',',')}% <span class="bar"><i style="width:${p.rate}%"></i></span></td></tr>`).join(''):'<tr><td colspan="7" class="empty">Cadastre participantes e lance pontuações para montar o ranking.</td></tr>';
- document.getElementById('rankingToggle').textContent=showFullRanking?'Mostrar apenas os 6 primeiros':'Ver classificação completa';
+ document.getElementById('leaderboard').innerHTML=ranking.length?(showFullRanking?ranking:ranking.slice(0,8)).map((p,i)=>`<tr><td class="rank">${i+1}</td><td>${p.photo?`<img class="avatar" src="${p.photo}" alt="">`:''}${esc(p.nick||p.name)}</td><td><b>${p.points}</b></td><td>${p.wins}</td><td>${p.draws}</td><td>${p.losses}</td><td>${p.rate.toFixed(1).replace('.',',')}% <span class="bar"><i style="width:${p.rate}%"></i></span></td></tr>`).join(''):'<tr><td colspan="7" class="empty">Cadastre participantes e lance pontuações para montar o ranking.</td></tr>';
+ document.getElementById('rankingToggle').textContent=showFullRanking?'Mostrar apenas os 8 primeiros':'Ver classificação completa';
  document.getElementById('playersTable').innerHTML=ranking.length?[...ranking].sort((a,b)=>(a.name||'').localeCompare(b.name||'','pt-BR',{sensitivity:'base'})).map(p=>`<tr><td>${p.photo?`<img class="avatar" src="${p.photo}" alt="">`:''}<b>${esc(p.name)}</b><br><span class="muted">${esc(p.nick||'')}</span></td><td>${p.points}</td><td>${p.wins}</td><td>${p.draws}</td><td>${p.presences}</td><td><button class="btn secondary" onclick="editPlayer('${p.id}')">Editar</button> <button class="btn danger" onclick="deletePlayer('${p.id}')">Excluir</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">Nenhum participante cadastrado.</td></tr>';
  renderParticipantProfile();
  renderDeckProfile();
@@ -1226,7 +1285,9 @@ function render(){
  document.getElementById('deckHighlights').innerHTML=deckTile(hi,'Mais utilizado','most')+deckTile(best,'Melhor aproveitamento')+deckTile(worst,'Menor aproveitamento');
  renderMatchHistory();
  const seasons=[...db.seasons].sort((a,b)=>b.start.localeCompare(a.start));if(!selectedSeason||!seasons.some(s=>s.id===selectedSeason))selectedSeason=seasons.find(s=>today()>=s.start&&today()<=s.end)?.id||seasons[0]?.id||'';
+ const homeSeason=document.getElementById('homeSeasonSelect');if(homeSeason){homeSeason.innerHTML=seasons.map(s=>`<option value="${s.id}" ${s.id===selectedSeason?'selected':''}>${esc(s.name)}</option>`).join('')||'<option value="">Nenhuma temporada cadastrada</option>';}
  document.getElementById('prizeSeason').innerHTML=seasons.map(s=>`<option value="${s.id}" ${s.id===selectedSeason?'selected':''}>${esc(s.name)} (${s.start} a ${s.end})</option>`).join('')||'<option value="">Crie uma temporada</option>';
+ renderComments();
  const currentSeason=db.seasons.find(s=>today()>=s.start&&today()<=s.end);const homeContribs=currentSeason?db.contributions.filter(c=>c.seasonId===currentSeason.id):[];const homeTotal=homeContribs.reduce((a,c)=>a+Number(c.amount),0);document.getElementById('homePrize').textContent=money(homeTotal);document.getElementById('homeContrib').textContent=homeContribs.length+' contribuições';document.getElementById('homeWeek').textContent=currentSeason?`${currentSeason.name} · ${currentSeason.start.split('-').reverse().join('/')} a ${currentSeason.end.split('-').reverse().join('/')}`:'Nenhuma temporada vigente';const cs=db.contributions.filter(c=>c.seasonId===selectedSeason),total=cs.reduce((a,c)=>a+Number(c.amount),0);document.getElementById('prizeTotal').textContent=money(total);document.getElementById('prizeCount').textContent=cs.length+' contribuições';
  document.getElementById('prizesTable').innerHTML=cs.length?[...cs].sort((a,b)=>b.date.localeCompare(a.date)).map(c=>`<tr><td>${c.date}</td><td>${esc(c.name)}</td><td><b>${money(c.amount)}</b></td><td><button class="btn danger" onclick="deleteContribution('${c.id}')">Excluir</button></td></tr>`).join(''):'<tr><td colspan="4" class="empty">Nenhuma contribuição nesta temporada.</td></tr>';
 }
@@ -1407,7 +1468,7 @@ function deleteScore(id){if(confirm('Excluir este lançamento de pontuação?'))
 document.getElementById('seasonForm').onsubmit=e=>{e.preventDefault();const name=seasonName.value.trim(),start=seasonStart.value,end=seasonEnd.value;if(end<start){alert('A data final deve ser igual ou posterior à data inicial.');return}const season={id:uid(),name,start,end};db.seasons.push(season);selectedSeason=season.id;e.target.reset();save()};
 document.getElementById('prizeForm').onsubmit=e=>{e.preventDefault();const amount=Number(prizeAmount.value),date=contributionDate.value,season=seasonForDate(date);if(amount<=0)return;if(!season){alert('A data informada não está dentro de uma temporada cadastrada. Crie uma temporada ou ajuste as datas.');return}db.contributions.push({id:uid(),name:contributor.value.trim(),amount,date,seasonId:season.id});selectedSeason=season.id;e.target.reset();document.getElementById('contributionDate').value=today();save()};
 document.getElementById('contributionDate').value=today();
-document.getElementById('prizeSeason').onchange=e=>{selectedSeason=e.target.value;render()};
+document.getElementById('prizeSeason').onchange=e=>{selectedSeason=e.target.value;render()};document.getElementById('homeSeasonSelect').onchange=e=>{selectedSeason=e.target.value;render()};
 function deleteContribution(id){if(confirm('Excluir contribuição?')){db.contributions=db.contributions.filter(c=>c.id!==id);save()}}
 function openModal(title,content){document.getElementById('modalTitle').textContent=title;document.getElementById('modalContent').innerHTML=content;document.getElementById('modal').classList.add('open')}
 function closeModal(){document.getElementById('modal').classList.remove('open')}
@@ -1456,7 +1517,8 @@ function openSettingsPanel(id,title){
 }
 const oldCloseModal=closeModal;
 closeModal=function(){restoreSettingsPanels();oldCloseModal()};
-const settings=document.createElement('button');settings.textContent='⚙';settings.title='Configurações e gerenciamento';settings.style.cssText='position:fixed;right:18px;bottom:18px;border:1px solid #d79b51;background:#172333;color:white;border-radius:50%;width:48px;height:48px;font-size:22px;cursor:pointer;z-index:15';settings.onclick=()=>openModal('Configurações do campeonato',`<p class="muted">Gerencie cadastros, decklists e premiação.</p><button class="btn secondary settings-option" onclick="openSettingsPanel('playerAdminPanel','Cadastro de participantes')">Participantes · Cadastrar participante</button><button class="btn secondary settings-option" onclick="openSettingsPanel('playersListPanel','Jogadores cadastrados')">Participantes · Jogadores cadastrados</button><button class="btn secondary settings-option" onclick="openSettingsPanel('deckAdminPanel','Adicionar deck')">Decks · Adicionar deck</button><button class="btn secondary settings-option" onclick="importAllDecklists()">Decks · Buscar decklists</button><button class="btn secondary settings-option" onclick="openSettingsPanel('seasonAdminPanel','Criar temporada')">O Tesouro · Criar temporada</button><button class="btn secondary settings-option" onclick="openSettingsPanel('contributionAdminPanel','Adicionar contribuição')">O Tesouro · Adicionar contribuição</button><hr style="border-color:#ffffff22;margin:16px 0"><div class="modal-actions"><button class="btn secondary" onclick="exportData()">Exportar backup</button><button class="btn secondary" onclick="importData()">Importar backup</button><button class="btn" onclick="openCloudSettings()">Conectar servidor / login</button></div>`);document.body.appendChild(settings);
+const settings=document.createElement('button');settings.textContent='⚙';settings.title='Configurações e gerenciamento';settings.style.cssText='position:fixed;right:18px;bottom:18px;border:1px solid #d79b51;background:#172333;color:white;border-radius:50%;width:48px;height:48px;font-size:22px;cursor:pointer;z-index:15';settings.onclick=()=>openModal('Configurações do campeonato',`<p class="muted">Gerencie cadastros, decklists e premiação.</p><button class="btn secondary settings-option" onclick="openSettingsPanel('playerAdminPanel','Cadastro de participantes')">Participantes · Cadastrar participante</button><button class="btn secondary settings-option" onclick="openSettingsPanel('playersListPanel','Jogadores cadastrados')">Participantes · Jogadores cadastrados</button><button class="btn secondary settings-option" onclick="openSettingsPanel('deckAdminPanel','Adicionar deck')">Decks · Adicionar deck</button><button class="btn secondary settings-option" onclick="importAllDecklists()">Decks · Buscar decklists</button><button class="btn secondary settings-option" onclick="openSettingsPanel('seasonAdminPanel','Criar temporada')">O Tesouro · Criar temporada</button><button class="btn secondary settings-option" onclick="openSettingsPanel('contributionAdminPanel','Adicionar contribuição')">O Tesouro · Adicionar contribuição</button><button class="btn secondary settings-option" onclick="openSettingsPanel('commentModerationPanel','Moderação de comentários')">Comentários · Moderação</button><hr style="border-color:#ffffff22;margin:16px 0"><div class="modal-actions"><button class="btn secondary" onclick="exportData()">Exportar backup</button><button class="btn secondary" onclick="importData()">Importar backup</button><button class="btn" onclick="openCloudSettings()">Conectar servidor / login</button></div>`);document.body.appendChild(settings);
+document.getElementById('commentForm').addEventListener('submit',submitComment);document.getElementById('commentBody').addEventListener('input',e=>document.getElementById('commentCharCount').textContent=e.target.value.length);populateCommentParticipants();
 render();if(!document.querySelector('.score-row'))addScoreRow();initSupabase();
 </script>
 </body>
