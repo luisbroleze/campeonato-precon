@@ -751,6 +751,15 @@ nav button.active{
 .deck-catalog-more{grid-column:1/-1;margin-top:8px;border:1px solid rgba(224,164,82,.35);border-radius:10px;background:rgba(10,17,28,.7);padding:14px}
 .deck-catalog-more>summary{cursor:pointer;color:#ffd17f;font-weight:700;font-size:13px;list-style-position:inside}
 .deck-catalog-expanded{margin-top:14px}
+
+.deck-highlight-main{font-size:22px;font-weight:800;margin:5px 0 0!important;color:#f4d49c}
+.deck-highlight-sub{font-size:12px!important;opacity:.82;margin-top:2px!important}
+.deck-pair-feature{display:flex;align-items:center;gap:14px;margin-top:12px}
+.deck-pair-feature img,.deck-pair-placeholder{width:86px;height:86px;object-fit:cover;border-radius:9px;border:1px solid rgba(231,170,77,.45);flex:0 0 86px}
+.deck-pair-placeholder{display:grid;place-items:center;background:rgba(255,255,255,.05);font-size:28px}
+.deck-catalog-selectable{cursor:pointer;transition:border-color .15s,transform .15s}
+.deck-catalog-selectable:hover{border-color:#e8aa4d;transform:translateY(-2px)}
+.deck-catalog-selectable.is-selected{border-color:#e8aa4d;box-shadow:0 0 0 1px rgba(232,170,77,.35)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -1057,7 +1066,7 @@ function safeExternalUrl(value){try{const u=new URL(String(value||''));return ['
 function renderDeckProfile(){
  const deckSelect=document.getElementById('profileDeck'),seasonSelect=document.getElementById('profileDeckSeason'),content=document.getElementById('deckProfileContent');
  if(!deckSelect||!seasonSelect||!content)return;
- const decks=[...db.decks].sort((a,b)=>(a.name||'').localeCompare(b.name||'','pt-BR',{sensitivity:'base'}));
+ const decks=[...db.decks].sort((a,b)=>deckStats(b).uses-deckStats(a).uses||(a.name||'').localeCompare(b.name||'','pt-BR',{sensitivity:'base'}));
  if(!selectedProfileDeck||!decks.some(d=>d.id===selectedProfileDeck))selectedProfileDeck=decks[0]?.id||'';
  deckSelect.innerHTML='<option value="">Selecione um deck</option>'+decks.map(d=>`<option value="${d.id}" ${d.id===selectedProfileDeck?'selected':''}>${esc(d.name)}</option>`).join('');
  const seasons=[...db.seasons].sort((a,b)=>b.start.localeCompare(a.start));
@@ -1072,8 +1081,17 @@ function renderDeckProfile(){
  const metric=(ico,label,value,sub,cls='')=>`<div class="profile-metric ${cls}"><span class="metric-icon">${ico}</span><div><small>${label}</small><strong>${value}</strong><em>${sub}</em></div></div>`;
  const playerCounts={};rows.forEach(m=>{const p=db.players.find(x=>x.id===m.playerId);if(!p)return;const item=playerCounts[p.id]||(playerCounts[p.id]={player:p,uses:0,wins:0,draws:0,losses:0});item.uses++;item.wins+=Number(m.wins||0);item.draws+=Number(m.draws||0);item.losses+=Number(m.losses||0)});
  const players=Object.values(playerCounts).sort((a,b)=>b.uses-a.uses||b.wins-a.wins);
- const pairedDeckStats={};(db.matches||[]).filter(m=>m.groupId&&m.deckId).forEach(m=>{const item=pairedDeckStats[m.deckId]||(pairedDeckStats[m.deckId]={wins:0,draws:0,losses:0,games:0});item.wins+=Number(m.wins||0);item.draws+=Number(m.draws||0);item.losses+=Number(m.losses||0);item.games+=Number(m.wins||0)+Number(m.draws||0)+Number(m.losses||0)});
- const bestPairedDeck=Object.entries(pairedDeckStats).map(([id,x])=>({deck:db.decks.find(z=>z.id===id),...x,rate:x.games?(x.wins+x.draws*.5)/x.games*100:0})).filter(x=>x.deck&&x.games>0).sort((a,b)=>b.rate-a.rate||b.games-a.games)[0];
+ const pairings={};const seenPairGroups=new Set();
+ rows.filter(m=>m.groupId).forEach(m=>{
+  if(seenPairGroups.has(m.groupId))return;seenPairGroups.add(m.groupId);
+  const group=(db.matches||[]).filter(x=>x.groupId===m.groupId);
+  const other=group.find(x=>x.deckId&&x.deckId!==d.id);if(!other)return;
+  const item=pairings[other.deckId]||(pairings[other.deckId]={deck:db.decks.find(x=>x.id===other.deckId),wins:0,draws:0,losses:0,games:0,pairings:0});
+  if(!item.deck)return;
+  item.wins+=Number(m.wins||0);item.draws+=Number(m.draws||0);item.losses+=Number(m.losses||0);
+  item.games+=Number(m.wins||0)+Number(m.draws||0)+Number(m.losses||0);item.pairings++;
+ });
+ const bestPairing=Object.values(pairings).filter(x=>x.deck&&x.games>0).map(x=>({...x,rate:(x.wins+x.draws*.5+2.5)/(x.games+5)*100,observedRate:(x.wins+x.draws*.5)/x.games*100})).sort((a,b)=>b.rate-a.rate||b.games-a.games)[0];
  const recent=rows.slice(-10),trend=recent.map(m=>{const n=Number(m.wins||0)+Number(m.draws||0)+Number(m.losses||0);return n?(Number(m.wins||0)+Number(m.draws||0)*.5)/n*100:0});
  const colors=(d.colors||[]).map(c=>`${colorSymbols[c]||''} ${colorNames[c]||c}`).join(' · ')||'Cores não definidas';
  const image=d.photo?`<img src="${d.photo}" alt="${esc(d.name)}">`:'<div class="deck-art-fallback" style="height:100%;display:grid;place-items:center;font-size:52px">✧</div>';
@@ -1089,7 +1107,7 @@ function renderDeckProfile(){
  </div></div><div class="deck-profile-lower">
  <div class="profile-card outcomes-card"><h3><span>◉</span> Distribuição de resultados</h3><div class="outcomes-summary"><div class="profile-donut" style="--win:${winPct}%;--draw:${winPct+drawPct}%"><b>${fmt(rate)}%</b></div><div><small>APROVEITAMENTO GERAL</small><strong>${fmt(rate)}%</strong><span>vitórias + metade dos empates</span></div></div><div class="result-bars">${[{label:'Vitórias',value:wins,color:'#e8a847'},{label:'Empates',value:draws,color:'#75a9cf'},{label:'Derrotas',value:losses,color:'#bd6671'}].map(x=>`<div class="result-bar-row"><b>${x.label}</b><div class="result-bar-track"><i style="width:${Math.max(0,x.value/Math.max(1,wins,draws,losses)*100)}%;background:${x.color}"></i></div><strong>${x.value}</strong></div>`).join('')}</div></div>
  <div class="profile-card trend-card"><h3><span>⌁</span> Spark Evolution</h3><div class="spark-subtitle">Aproveitamento por registro · até 10 datas mais recentes</div><div id="deckSparkChart" class="spark-bars"></div><button class="btn secondary spark-history-toggle" type="button" onclick="toggleDeckSparkHistory()">Ver histórico completo</button></div>
- <div class="profile-card"><h3><span>♛</span> Deck com melhor aproveitamento em duplas</h3>${bestPairedDeck?`<div class="deck-profile-player"><span><b>${esc(bestPairedDeck.deck.name)}</b><small style="display:block;color:#9da9b8;margin-top:3px">${bestPairedDeck.wins} vitórias · ${bestPairedDeck.draws} empates · ${bestPairedDeck.losses} derrotas · ${bestPairedDeck.games} jogos pareados</small></span><strong>${bestPairedDeck.rate.toFixed(1).replace('.',',')}%</strong></div>`:'<div class="profile-no-data">Nenhuma partida em dupla com deck identificado foi registrada.</div>'}</div>
+ <div class="profile-card"><h3><span>♛</span> Funciona melhor com</h3>${bestPairing?`<div class="deck-pair-feature">${bestPairing.deck.photo?`<img src="${bestPairing.deck.photo}" alt="${esc(bestPairing.deck.name)}">`:'<div class="deck-pair-placeholder">▤</div>'}<div><b>${esc(bestPairing.deck.name)}</b><div class="favorite-stats">${bestPairing.pairings} pareamento(s) · ${bestPairing.games} partidas<br>${bestPairing.wins} vitórias · ${bestPairing.draws} empates · ${bestPairing.losses} derrotas<br>Aproveitamento ajustado: <b>${bestPairing.rate.toFixed(1).replace('.',',')}%</b></div></div></div>`:'<div class="profile-no-data">Ainda não há pareamentos registrados com outro deck.</div>'}</div>
  <div class="profile-card"><h3><span>♟</span> Jogadores que mais utilizaram</h3>${players.length?`<div class="deck-profile-players">${players.slice(0,6).map(x=>`<div class="deck-profile-player"><span>${esc(x.player.nick||x.player.name)}<small style="display:block;color:#9da9b8;margin-top:3px">${x.wins} vitórias · ${x.draws} empates · ${x.losses} derrotas</small></span><b>${x.uses} ${x.uses===1?'uso':'usos'}</b></div>`).join('')}</div>`:'<div class="profile-no-data">Nenhum jogador utilizou este deck no período.</div>'}</div>
  <div class="profile-card"><h3><span>▤</span> Informações do deck</h3><div class="favorite-stats">Comandante: <b>${esc(d.commander||'Não informado')}</b><br>Identidade de cores: <b>${esc(colors)}</b><br>Utilizações registradas: <b>${uses}</b><br>Partidas com resultado: <b>${played}</b></div>${url?`<a class="deck-profile-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">↗ Abrir decklist completa</a>`:'<div class="profile-no-data">Adicione um link de decklist na edição do deck para disponibilizá-lo aqui.</div>'}</div>
  </div>${renderDecklistSection(d)}`;
@@ -1161,7 +1179,8 @@ function renderWeeklyChampion(){
  }).join(ctx.champions.length>1?'<div class="weekly-champion-tie">Empate na liderança semanal</div>':'');
 }
 
-function renderDeckCatalogCard(d){const st=deckStats(d),colors=(d.colors||[]).map(c=>`${colorSymbols[c]||''} ${colorNames[c]||c}`).join(' · ')||'Cores não definidas';return `<div class="deck-card">${d.photo?`<img class="deck-photo" src="${d.photo}" alt="${esc(d.name)}">`:''}<div class="deck-color">${(d.colors||[]).map(c=>colorSymbols[c]||'').join(' ')}</div><h3>${esc(d.name)}</h3><p>${esc(colors)}</p><p>Comandante: ${esc(d.commander||'Não informado')}</p>${safeExternalUrl(d.decklistUrl||d.decklist||d.deckUrl)?`<p><a href="${esc(safeExternalUrl(d.decklistUrl||d.decklist||d.deckUrl))}" target="_blank" rel="noopener noreferrer">↗ Decklist completa</a></p>`:''}<p>Utilizações: <b>${st.uses}</b> · Vitórias: <b>${st.wins}</b> · Empates: <b>${st.draws}</b> · Derrotas: <b>${st.losses}</b></p><p>Aproveitamento: <b>${st.rate.toFixed(1).replace('.',',')}%</b></p><button class="btn secondary" onclick="editDeck('${d.id}')">Editar</button> <button class="btn danger" onclick="deleteDeck('${d.id}')">Excluir</button></div>`}
+function selectDeckProfile(id){selectedProfileDeck=id;deckSparkShowAll=false;renderDeckProfile();const select=document.getElementById('profileDeck');if(select)select.value=id}
+function renderDeckCatalogCard(d){const st=deckStats(d),colors=(d.colors||[]).map(c=>`${colorSymbols[c]||''} ${colorNames[c]||c}`).join(' · ')||'Cores não definidas';return `<div class="deck-card deck-catalog-selectable ${selectedProfileDeck===d.id?'is-selected':''}" role="button" tabindex="0" onclick="selectDeckProfile('${d.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectDeckProfile('${d.id}')}">${d.photo?`<img class="deck-photo" src="${d.photo}" alt="${esc(d.name)}">`:''}<div class="deck-color">${(d.colors||[]).map(c=>colorSymbols[c]||'').join(' ')}</div><h3>${esc(d.name)}</h3><p>${esc(colors)}</p><p>Comandante: ${esc(d.commander||'Não informado')}</p>${safeExternalUrl(d.decklistUrl||d.decklist||d.deckUrl)?`<p><a href="${esc(safeExternalUrl(d.decklistUrl||d.decklist||d.deckUrl))}" target="_blank" rel="noopener noreferrer">↗ Decklist completa</a></p>`:''}<p>Utilizações: <b>${st.uses}</b> · Vitórias: <b>${st.wins}</b> · Empates: <b>${st.draws}</b> · Derrotas: <b>${st.losses}</b></p><p>Aproveitamento: <b>${st.rate.toFixed(1).replace('.',',')}%</b></p><button class="btn secondary" onclick="event.stopPropagation();editDeck('${d.id}')">Editar</button> <button class="btn danger" onclick="event.stopPropagation();deleteDeck('${d.id}')">Excluir</button></div>`}
 function render(){
  renderWeeklyChampion();
  const ranking=playerStats();document.getElementById('statPlayers').textContent=db.players.length;document.getElementById('statDecks').textContent=db.decks.length;document.getElementById('statMatches').textContent=db.matches.length;
@@ -1170,9 +1189,15 @@ function render(){
  document.getElementById('playersTable').innerHTML=ranking.length?[...ranking].sort((a,b)=>(a.name||'').localeCompare(b.name||'','pt-BR',{sensitivity:'base'})).map(p=>`<tr><td>${p.photo?`<img class="avatar" src="${p.photo}" alt="">`:''}<b>${esc(p.name)}</b><br><span class="muted">${esc(p.nick||'')}</span></td><td>${p.points}</td><td>${p.wins}</td><td>${p.draws}</td><td>${p.presences}</td><td><button class="btn secondary" onclick="editPlayer('${p.id}')">Editar</button> <button class="btn danger" onclick="deletePlayer('${p.id}')">Excluir</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">Nenhum participante cadastrado.</td></tr>';
  renderParticipantProfile();
  renderDeckProfile();
- const sortedDeckCatalog=[...db.decks].sort((a,b)=>(a.name||'').localeCompare(b.name||'','pt-BR',{sensitivity:'base'}));
+ const sortedDeckCatalog=[...db.decks].sort((a,b)=>deckStats(b).uses-deckStats(a).uses||(a.name||'').localeCompare(b.name||'','pt-BR',{sensitivity:'base'}));
  document.getElementById('decksCards').innerHTML=sortedDeckCatalog.length?sortedDeckCatalog.slice(0,6).map(renderDeckCatalogCard).join('')+(sortedDeckCatalog.length>6?`<details class="deck-catalog-more"><summary>Ver todos os ${sortedDeckCatalog.length-6} decks restantes</summary><div class="cards deck-catalog-expanded">${sortedDeckCatalog.slice(6).map(renderDeckCatalogCard).join('')}</div></details>`:''):'<div class="panel empty">Nenhum deck cadastrado.</div>';
- const usage=db.decks.map(d=>({deck:d,...deckStats(d)})).sort((a,b)=>b.uses-a.uses);const hi=usage[0],lo=usage.length?usage[usage.length-1]:null;const deckTile=(item,label)=>item?`<div class="deck-highlight">${item.deck.photo?`<img src="${item.deck.photo}" alt="${esc(item.deck.name)}">`:'<div class="placeholder">▤</div>'}<div><div class="tag">${label}</div><h3>${esc(item.deck.name)}</h3><p>${item.uses} utilizações</p><p>${item.wins} vitórias · ${item.draws} empates · ${item.losses} derrotas</p><p>Aproveitamento: <b>${item.rate.toFixed(1).replace('.',',')}%</b></p></div></div>`:`<div class="deck-highlight"><div class="placeholder">▤</div><div><div class="tag">${label}</div><h3>Sem decks cadastrados</h3><p>Adicione decks para visualizar este destaque.</p></div></div>`;document.getElementById('deckHighlights').innerHTML=deckTile(hi,'Mais utilizado')+deckTile(lo&&lo.deck.id!==hi?.deck.id?lo:null,'Menos utilizado');
+ const usage=db.decks.map(d=>({deck:d,...deckStats(d)})).sort((a,b)=>b.uses-a.uses);
+ const adjustedRate=x=>{const n=Number(x.wins||0)+Number(x.draws||0)+Number(x.losses||0),score=Number(x.wins||0)+Number(x.draws||0)*.5;return (score+2.5)/(n+5)*100};
+ const hi=usage[0],eligible=usage.filter(x=>(Number(x.wins||0)+Number(x.draws||0)+Number(x.losses||0))>=5);
+ const best=eligible.length?[...eligible].sort((a,b)=>adjustedRate(b)-adjustedRate(a))[0]:null;
+ const worst=eligible.length?[...eligible].sort((a,b)=>adjustedRate(a)-adjustedRate(b))[0]:null;
+ const deckTile=(item,label,mode='standard')=>item?`<div class="deck-highlight">${item.deck.photo?`<img src="${item.deck.photo}" alt="${esc(item.deck.name)}">`:'<div class="placeholder">▤</div>'}<div><div class="tag">${label}</div><h3>${esc(item.deck.name)}</h3>${mode==='most'?`<p class="deck-highlight-main">${item.uses} utilizações</p><p class="deck-highlight-sub">Aproveitamento: <b>${adjustedRate(item).toFixed(1).replace('.',',')}%</b></p>`:`<p>${item.uses} utilizações · ${Number(item.wins||0)+Number(item.draws||0)+Number(item.losses||0)} partidas</p><p>Aproveitamento ajustado: <b>${adjustedRate(item).toFixed(1).replace('.',',')}%</b></p><p class="deck-highlight-sub">Resultado observado: ${item.rate.toFixed(1).replace('.',',')}%</p>`}</div></div>`:`<div class="deck-highlight"><div class="placeholder">▤</div><div><div class="tag">${label}</div><h3>${label==='Melhor aproveitamento'||label==='Menor aproveitamento'?'Dados insuficientes':'Sem decks cadastrados'}</h3><p>${label==='Melhor aproveitamento'||label==='Menor aproveitamento'?'São necessárias pelo menos 5 partidas registradas para comparar o aproveitamento.':'Adicione decks para visualizar este destaque.'}</p></div></div>`;
+ document.getElementById('deckHighlights').innerHTML=deckTile(hi,'Mais utilizado','most')+deckTile(best,'Melhor aproveitamento')+deckTile(worst,'Menor aproveitamento');
  renderMatchHistory();
  const seasons=[...db.seasons].sort((a,b)=>b.start.localeCompare(a.start));if(!selectedSeason||!seasons.some(s=>s.id===selectedSeason))selectedSeason=seasons.find(s=>today()>=s.start&&today()<=s.end)?.id||seasons[0]?.id||'';
  document.getElementById('prizeSeason').innerHTML=seasons.map(s=>`<option value="${s.id}" ${s.id===selectedSeason?'selected':''}>${esc(s.name)} (${s.start} a ${s.end})</option>`).join('')||'<option value="">Crie uma temporada</option>';
